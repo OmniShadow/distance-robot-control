@@ -16,9 +16,9 @@ If u want to set the parameters of the velocity waveform, change the code in vel
 
 Then, execute the Python script "plot_response.py" passing the generated folder to plot the data in some graphs. It's needed to generate other useful csv files.
 
-Then, only after executed the previous script, execute "find_tf.py" to find the parameters of Meca500 fdt.
+Then, only after executed the previous script, execute "find_tf.py" to find the parameters of Meca500 transfer function.
 
-You can test the founded fdt running the Matlab script "test_tf.mlx"
+You can test it, opening and running the Matlab script "test_tf.mlx" after setting the right parameters
 
 
 ## How to project the digital regulator:
