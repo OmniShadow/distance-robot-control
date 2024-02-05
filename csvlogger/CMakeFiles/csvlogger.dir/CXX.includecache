@@ -1,0 +1,26 @@
+#IncludeRegexLine: ^[ 	]*[#%][ 	]*(include|import)[ 	]*[<"]([^">]+)([">])
+
+#IncludeRegexScan: ^.*$
+
+#IncludeRegexComplain: ^$
+
+#IncludeRegexTransform: 
+
+/home/pi/Desktop/c_projects/calibrazione/csvlogger/CsvLogger.cpp
+CsvLogger.hpp
+/home/pi/Desktop/c_projects/calibrazione/csvlogger/CsvLogger.hpp
+stdio.h
+-
+iostream
+-
+filesystem
+-
+cstdio
+-
+
+/home/pi/Desktop/c_projects/calibrazione/csvlogger/CsvLogger.hpp
+iostream
+-
+fstream
+-
+

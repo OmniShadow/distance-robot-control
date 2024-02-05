@@ -1,0 +1,2 @@
+/usr/bin/ar qc libcsvlogger.a CMakeFiles/csvlogger.dir/CsvLogger.cpp.o
+/usr/bin/ranlib libcsvlogger.a
