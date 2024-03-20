@@ -1,0 +1,212 @@
+[
+{
+  "directory": "C:/distance-robot-control/build",
+  "command": "G:\\msys2\\ucrt64\\bin\\g++.exe  @CMakeFiles/test.dir/includes_CXX.rsp -g -std=gnu++20 -Wall -pthread -lpthread -o CMakeFiles\\test.dir\\test_regolatore.cpp.obj -c C:\\distance-robot-control\\test_regolatore.cpp",
+  "file": "C:/distance-robot-control/test_regolatore.cpp",
+  "output": "CMakeFiles/test.dir/test_regolatore.cpp.obj"
+},
+{
+  "directory": "C:/distance-robot-control/build/csvlogger",
+  "command": "G:\\msys2\\ucrt64\\bin\\g++.exe  @CMakeFiles/csvlogger.dir/includes_CXX.rsp -g -std=gnu++17 -o CMakeFiles\\csvlogger.dir\\CsvLogger.cpp.obj -c C:\\distance-robot-control\\csvlogger\\CsvLogger.cpp",
+  "file": "C:/distance-robot-control/csvlogger/CsvLogger.cpp",
+  "output": "csvlogger/CMakeFiles/csvlogger.dir/CsvLogger.cpp.obj"
+},
+{
+  "directory": "C:/distance-robot-control/build/distance_sensor",
+  "command": "G:\\msys2\\ucrt64\\bin\\g++.exe -Ddistance_sensor_EXPORTS @CMakeFiles/distance_sensor.dir/includes_CXX.rsp -g -std=gnu++20 -Wall -pthread -o CMakeFiles\\distance_sensor.dir\\src\\InfraredSensor.cpp.obj -c C:\\distance-robot-control\\distance_sensor\\src\\InfraredSensor.cpp",
+  "file": "C:/distance-robot-control/distance_sensor/src/InfraredSensor.cpp",
+  "output": "distance_sensor/CMakeFiles/distance_sensor.dir/src/InfraredSensor.cpp.obj"
+},
+{
+  "directory": "C:/distance-robot-control/build/distance_sensor",
+  "command": "G:\\msys2\\ucrt64\\bin\\g++.exe -Ddistance_sensor_EXPORTS @CMakeFiles/distance_sensor.dir/includes_CXX.rsp -g -std=gnu++20 -Wall -pthread -o CMakeFiles\\distance_sensor.dir\\src\\UltrasonicSensor.cpp.obj -c C:\\distance-robot-control\\distance_sensor\\src\\UltrasonicSensor.cpp",
+  "file": "C:/distance-robot-control/distance_sensor/src/UltrasonicSensor.cpp",
+  "output": "distance_sensor/CMakeFiles/distance_sensor.dir/src/UltrasonicSensor.cpp.obj"
+},
+{
+  "directory": "C:/distance-robot-control/build/distance_sensor",
+  "command": "G:\\msys2\\ucrt64\\bin\\g++.exe -Ddistance_sensor_EXPORTS @CMakeFiles/distance_sensor.dir/includes_CXX.rsp -g -std=gnu++20 -Wall -pthread -o CMakeFiles\\distance_sensor.dir\\src\\impl\\list_ports\\list_ports_linux.cpp.obj -c C:\\distance-robot-control\\distance_sensor\\src\\impl\\list_ports\\list_ports_linux.cpp",
+  "file": "C:/distance-robot-control/distance_sensor/src/impl/list_ports/list_ports_linux.cpp",
+  "output": "distance_sensor/CMakeFiles/distance_sensor.dir/src/impl/list_ports/list_ports_linux.cpp.obj"
+},
+{
+  "directory": "C:/distance-robot-control/build/distance_sensor",
+  "command": "G:\\msys2\\ucrt64\\bin\\g++.exe -Ddistance_sensor_EXPORTS @CMakeFiles/distance_sensor.dir/includes_CXX.rsp -g -std=gnu++20 -Wall -pthread -o CMakeFiles\\distance_sensor.dir\\src\\impl\\list_ports\\list_ports_osx.cpp.obj -c C:\\distance-robot-control\\distance_sensor\\src\\impl\\list_ports\\list_ports_osx.cpp",
+  "file": "C:/distance-robot-control/distance_sensor/src/impl/list_ports/list_ports_osx.cpp",
+  "output": "distance_sensor/CMakeFiles/distance_sensor.dir/src/impl/list_ports/list_ports_osx.cpp.obj"
+},
+{
+  "directory": "C:/distance-robot-control/build/distance_sensor",
+  "command": "G:\\msys2\\ucrt64\\bin\\g++.exe -Ddistance_sensor_EXPORTS @CMakeFiles/distance_sensor.dir/includes_CXX.rsp -g -std=gnu++20 -Wall -pthread -o CMakeFiles\\distance_sensor.dir\\src\\impl\\unix.cpp.obj -c C:\\distance-robot-control\\distance_sensor\\src\\impl\\unix.cpp",
+  "file": "C:/distance-robot-control/distance_sensor/src/impl/unix.cpp",
+  "output": "distance_sensor/CMakeFiles/distance_sensor.dir/src/impl/unix.cpp.obj"
+},
+{
+  "directory": "C:/distance-robot-control/build/distance_sensor",
+  "command": "G:\\msys2\\ucrt64\\bin\\g++.exe -Ddistance_sensor_EXPORTS @CMakeFiles/distance_sensor.dir/includes_CXX.rsp -g -std=gnu++20 -Wall -pthread -o CMakeFiles\\distance_sensor.dir\\src\\impl\\win.cpp.obj -c C:\\distance-robot-control\\distance_sensor\\src\\impl\\win.cpp",
+  "file": "C:/distance-robot-control/distance_sensor/src/impl/win.cpp",
+  "output": "distance_sensor/CMakeFiles/distance_sensor.dir/src/impl/win.cpp.obj"
+},
+{
+  "directory": "C:/distance-robot-control/build/distance_sensor",
+  "command": "G:\\msys2\\ucrt64\\bin\\g++.exe -Ddistance_sensor_EXPORTS @CMakeFiles/distance_sensor.dir/includes_CXX.rsp -g -std=gnu++20 -Wall -pthread -o CMakeFiles\\distance_sensor.dir\\src\\serial.cpp.obj -c C:\\distance-robot-control\\distance_sensor\\src\\serial.cpp",
+  "file": "C:/distance-robot-control/distance_sensor/src/serial.cpp",
+  "output": "distance_sensor/CMakeFiles/distance_sensor.dir/src/serial.cpp.obj"
+},
+{
+  "directory": "C:/distance-robot-control/build/meca500_ethercat_cpp",
+  "command": "G:\\msys2\\ucrt64\\bin\\g++.exe  @CMakeFiles/meca500_driver.dir/includes_CXX.rsp -g -std=gnu++20 -o CMakeFiles\\meca500_driver.dir\\CsvLoggerFeedback.cpp.obj -c C:\\distance-robot-control\\meca500_ethercat_cpp\\CsvLoggerFeedback.cpp",
+  "file": "C:/distance-robot-control/meca500_ethercat_cpp/CsvLoggerFeedback.cpp",
+  "output": "meca500_ethercat_cpp/CMakeFiles/meca500_driver.dir/CsvLoggerFeedback.cpp.obj"
+},
+{
+  "directory": "C:/distance-robot-control/build/meca500_ethercat_cpp",
+  "command": "G:\\msys2\\ucrt64\\bin\\g++.exe  @CMakeFiles/meca500_driver.dir/includes_CXX.rsp -g -std=gnu++20 -o CMakeFiles\\meca500_driver.dir\\Robot.cpp.obj -c C:\\distance-robot-control\\meca500_ethercat_cpp\\Robot.cpp",
+  "file": "C:/distance-robot-control/meca500_ethercat_cpp/Robot.cpp",
+  "output": "meca500_ethercat_cpp/CMakeFiles/meca500_driver.dir/Robot.cpp.obj"
+},
+{
+  "directory": "C:/distance-robot-control/build/meca500_ethercat_cpp",
+  "command": "G:\\msys2\\ucrt64\\bin\\g++.exe  @CMakeFiles/meca500_driver.dir/includes_CXX.rsp -g -std=gnu++20 -o CMakeFiles\\meca500_driver.dir\\jacobian_meca.cpp.obj -c C:\\distance-robot-control\\meca500_ethercat_cpp\\jacobian_meca.cpp",
+  "file": "C:/distance-robot-control/meca500_ethercat_cpp/jacobian_meca.cpp",
+  "output": "meca500_ethercat_cpp/CMakeFiles/meca500_driver.dir/jacobian_meca.cpp.obj"
+},
+{
+  "directory": "C:/distance-robot-control/build/meca500_ethercat_cpp",
+  "command": "G:\\msys2\\ucrt64\\bin\\g++.exe  @CMakeFiles/meca500_driver.dir/includes_CXX.rsp -g -std=gnu++20 -o CMakeFiles\\meca500_driver.dir\\joints_vel.cpp.obj -c C:\\distance-robot-control\\meca500_ethercat_cpp\\joints_vel.cpp",
+  "file": "C:/distance-robot-control/meca500_ethercat_cpp/joints_vel.cpp",
+  "output": "meca500_ethercat_cpp/CMakeFiles/meca500_driver.dir/joints_vel.cpp.obj"
+},
+{
+  "directory": "C:/distance-robot-control/build/meca500_ethercat_cpp",
+  "command": "G:\\msys2\\ucrt64\\bin\\g++.exe  @CMakeFiles/meca500_driver.dir/includes_CXX.rsp -g -std=gnu++20 -o CMakeFiles\\meca500_driver.dir\\matrix-test.cpp.obj -c C:\\distance-robot-control\\meca500_ethercat_cpp\\matrix-test.cpp",
+  "file": "C:/distance-robot-control/meca500_ethercat_cpp/matrix-test.cpp",
+  "output": "meca500_ethercat_cpp/CMakeFiles/meca500_driver.dir/matrix-test.cpp.obj"
+},
+{
+  "directory": "C:/distance-robot-control/build/meca500_ethercat_cpp",
+  "command": "G:\\msys2\\ucrt64\\bin\\g++.exe  @CMakeFiles/meca500_driver.dir/includes_CXX.rsp -g -std=gnu++20 -o CMakeFiles\\meca500_driver.dir\\matrix_tools.cpp.obj -c C:\\distance-robot-control\\meca500_ethercat_cpp\\matrix_tools.cpp",
+  "file": "C:/distance-robot-control/meca500_ethercat_cpp/matrix_tools.cpp",
+  "output": "meca500_ethercat_cpp/CMakeFiles/meca500_driver.dir/matrix_tools.cpp.obj"
+},
+{
+  "directory": "C:/distance-robot-control/build/meca500_ethercat_cpp",
+  "command": "G:\\msys2\\ucrt64\\bin\\g++.exe  @CMakeFiles/meca500_driver.dir/includes_CXX.rsp -g -std=gnu++20 -o CMakeFiles\\meca500_driver.dir\\test.cpp.obj -c C:\\distance-robot-control\\meca500_ethercat_cpp\\test.cpp",
+  "file": "C:/distance-robot-control/meca500_ethercat_cpp/test.cpp",
+  "output": "meca500_ethercat_cpp/CMakeFiles/meca500_driver.dir/test.cpp.obj"
+},
+{
+  "directory": "C:/distance-robot-control/build/meca500_ethercat_cpp",
+  "command": "G:\\msys2\\ucrt64\\bin\\g++.exe  @CMakeFiles/robot-test.dir/includes_CXX.rsp -g -std=gnu++20 -o CMakeFiles\\robot-test.dir\\test.cpp.obj -c C:\\distance-robot-control\\meca500_ethercat_cpp\\test.cpp",
+  "file": "C:/distance-robot-control/meca500_ethercat_cpp/test.cpp",
+  "output": "meca500_ethercat_cpp/CMakeFiles/robot-test.dir/test.cpp.obj"
+},
+{
+  "directory": "C:/distance-robot-control/build/meca500_ethercat_cpp",
+  "command": "G:\\msys2\\ucrt64\\bin\\g++.exe  @CMakeFiles/matrix-test.dir/includes_CXX.rsp -g -std=gnu++20 -o CMakeFiles\\matrix-test.dir\\matrix-test.cpp.obj -c C:\\distance-robot-control\\meca500_ethercat_cpp\\matrix-test.cpp",
+  "file": "C:/distance-robot-control/meca500_ethercat_cpp/matrix-test.cpp",
+  "output": "meca500_ethercat_cpp/CMakeFiles/matrix-test.dir/matrix-test.cpp.obj"
+},
+{
+  "directory": "C:/distance-robot-control/build/meca500_ethercat_cpp/sun_etherCAT/sun_ethercat_master",
+  "command": "G:\\msys2\\ucrt64\\bin\\g++.exe  @CMakeFiles/sun_ethercat_master.dir/includes_CXX.rsp -g -std=gnu++20 -o CMakeFiles\\sun_ethercat_master.dir\\src\\Master.cpp.obj -c C:\\distance-robot-control\\meca500_ethercat_cpp\\sun_etherCAT\\sun_ethercat_master\\src\\Master.cpp",
+  "file": "C:/distance-robot-control/meca500_ethercat_cpp/sun_etherCAT/sun_ethercat_master/src/Master.cpp",
+  "output": "meca500_ethercat_cpp/sun_etherCAT/sun_ethercat_master/CMakeFiles/sun_ethercat_master.dir/src/Master.cpp.obj"
+},
+{
+  "directory": "C:/distance-robot-control/build/meca500_ethercat_cpp/sun_etherCAT/SOEM",
+  "command": "G:\\msys2\\ucrt64\\bin\\gcc.exe  @CMakeFiles/soem.dir/includes_C.rsp  /D _CRT_SECURE_NO_WARNINGS  /WX -g -o CMakeFiles\\soem.dir\\soem\\ethercatbase.c.obj -c C:\\distance-robot-control\\meca500_ethercat_cpp\\sun_etherCAT\\SOEM\\soem\\ethercatbase.c",
+  "file": "C:/distance-robot-control/meca500_ethercat_cpp/sun_etherCAT/SOEM/soem/ethercatbase.c",
+  "output": "meca500_ethercat_cpp/sun_etherCAT/SOEM/CMakeFiles/soem.dir/soem/ethercatbase.c.obj"
+},
+{
+  "directory": "C:/distance-robot-control/build/meca500_ethercat_cpp/sun_etherCAT/SOEM",
+  "command": "G:\\msys2\\ucrt64\\bin\\gcc.exe  @CMakeFiles/soem.dir/includes_C.rsp  /D _CRT_SECURE_NO_WARNINGS  /WX -g -o CMakeFiles\\soem.dir\\soem\\ethercatcoe.c.obj -c C:\\distance-robot-control\\meca500_ethercat_cpp\\sun_etherCAT\\SOEM\\soem\\ethercatcoe.c",
+  "file": "C:/distance-robot-control/meca500_ethercat_cpp/sun_etherCAT/SOEM/soem/ethercatcoe.c",
+  "output": "meca500_ethercat_cpp/sun_etherCAT/SOEM/CMakeFiles/soem.dir/soem/ethercatcoe.c.obj"
+},
+{
+  "directory": "C:/distance-robot-control/build/meca500_ethercat_cpp/sun_etherCAT/SOEM",
+  "command": "G:\\msys2\\ucrt64\\bin\\gcc.exe  @CMakeFiles/soem.dir/includes_C.rsp  /D _CRT_SECURE_NO_WARNINGS  /WX -g -o CMakeFiles\\soem.dir\\soem\\ethercatconfig.c.obj -c C:\\distance-robot-control\\meca500_ethercat_cpp\\sun_etherCAT\\SOEM\\soem\\ethercatconfig.c",
+  "file": "C:/distance-robot-control/meca500_ethercat_cpp/sun_etherCAT/SOEM/soem/ethercatconfig.c",
+  "output": "meca500_ethercat_cpp/sun_etherCAT/SOEM/CMakeFiles/soem.dir/soem/ethercatconfig.c.obj"
+},
+{
+  "directory": "C:/distance-robot-control/build/meca500_ethercat_cpp/sun_etherCAT/SOEM",
+  "command": "G:\\msys2\\ucrt64\\bin\\gcc.exe  @CMakeFiles/soem.dir/includes_C.rsp  /D _CRT_SECURE_NO_WARNINGS  /WX -g -o CMakeFiles\\soem.dir\\soem\\ethercatdc.c.obj -c C:\\distance-robot-control\\meca500_ethercat_cpp\\sun_etherCAT\\SOEM\\soem\\ethercatdc.c",
+  "file": "C:/distance-robot-control/meca500_ethercat_cpp/sun_etherCAT/SOEM/soem/ethercatdc.c",
+  "output": "meca500_ethercat_cpp/sun_etherCAT/SOEM/CMakeFiles/soem.dir/soem/ethercatdc.c.obj"
+},
+{
+  "directory": "C:/distance-robot-control/build/meca500_ethercat_cpp/sun_etherCAT/SOEM",
+  "command": "G:\\msys2\\ucrt64\\bin\\gcc.exe  @CMakeFiles/soem.dir/includes_C.rsp  /D _CRT_SECURE_NO_WARNINGS  /WX -g -o CMakeFiles\\soem.dir\\soem\\ethercateoe.c.obj -c C:\\distance-robot-control\\meca500_ethercat_cpp\\sun_etherCAT\\SOEM\\soem\\ethercateoe.c",
+  "file": "C:/distance-robot-control/meca500_ethercat_cpp/sun_etherCAT/SOEM/soem/ethercateoe.c",
+  "output": "meca500_ethercat_cpp/sun_etherCAT/SOEM/CMakeFiles/soem.dir/soem/ethercateoe.c.obj"
+},
+{
+  "directory": "C:/distance-robot-control/build/meca500_ethercat_cpp/sun_etherCAT/SOEM",
+  "command": "G:\\msys2\\ucrt64\\bin\\gcc.exe  @CMakeFiles/soem.dir/includes_C.rsp  /D _CRT_SECURE_NO_WARNINGS  /WX -g -o CMakeFiles\\soem.dir\\soem\\ethercatfoe.c.obj -c C:\\distance-robot-control\\meca500_ethercat_cpp\\sun_etherCAT\\SOEM\\soem\\ethercatfoe.c",
+  "file": "C:/distance-robot-control/meca500_ethercat_cpp/sun_etherCAT/SOEM/soem/ethercatfoe.c",
+  "output": "meca500_ethercat_cpp/sun_etherCAT/SOEM/CMakeFiles/soem.dir/soem/ethercatfoe.c.obj"
+},
+{
+  "directory": "C:/distance-robot-control/build/meca500_ethercat_cpp/sun_etherCAT/SOEM",
+  "command": "G:\\msys2\\ucrt64\\bin\\gcc.exe  @CMakeFiles/soem.dir/includes_C.rsp  /D _CRT_SECURE_NO_WARNINGS  /WX -g -o CMakeFiles\\soem.dir\\soem\\ethercatmain.c.obj -c C:\\distance-robot-control\\meca500_ethercat_cpp\\sun_etherCAT\\SOEM\\soem\\ethercatmain.c",
+  "file": "C:/distance-robot-control/meca500_ethercat_cpp/sun_etherCAT/SOEM/soem/ethercatmain.c",
+  "output": "meca500_ethercat_cpp/sun_etherCAT/SOEM/CMakeFiles/soem.dir/soem/ethercatmain.c.obj"
+},
+{
+  "directory": "C:/distance-robot-control/build/meca500_ethercat_cpp/sun_etherCAT/SOEM",
+  "command": "G:\\msys2\\ucrt64\\bin\\gcc.exe  @CMakeFiles/soem.dir/includes_C.rsp  /D _CRT_SECURE_NO_WARNINGS  /WX -g -o CMakeFiles\\soem.dir\\soem\\ethercatprint.c.obj -c C:\\distance-robot-control\\meca500_ethercat_cpp\\sun_etherCAT\\SOEM\\soem\\ethercatprint.c",
+  "file": "C:/distance-robot-control/meca500_ethercat_cpp/sun_etherCAT/SOEM/soem/ethercatprint.c",
+  "output": "meca500_ethercat_cpp/sun_etherCAT/SOEM/CMakeFiles/soem.dir/soem/ethercatprint.c.obj"
+},
+{
+  "directory": "C:/distance-robot-control/build/meca500_ethercat_cpp/sun_etherCAT/SOEM",
+  "command": "G:\\msys2\\ucrt64\\bin\\gcc.exe  @CMakeFiles/soem.dir/includes_C.rsp  /D _CRT_SECURE_NO_WARNINGS  /WX -g -o CMakeFiles\\soem.dir\\soem\\ethercatsoe.c.obj -c C:\\distance-robot-control\\meca500_ethercat_cpp\\sun_etherCAT\\SOEM\\soem\\ethercatsoe.c",
+  "file": "C:/distance-robot-control/meca500_ethercat_cpp/sun_etherCAT/SOEM/soem/ethercatsoe.c",
+  "output": "meca500_ethercat_cpp/sun_etherCAT/SOEM/CMakeFiles/soem.dir/soem/ethercatsoe.c.obj"
+},
+{
+  "directory": "C:/distance-robot-control/build/meca500_ethercat_cpp/sun_etherCAT/SOEM",
+  "command": "G:\\msys2\\ucrt64\\bin\\gcc.exe  @CMakeFiles/soem.dir/includes_C.rsp  /D _CRT_SECURE_NO_WARNINGS  /WX -g -o CMakeFiles\\soem.dir\\osal\\win32\\osal.c.obj -c C:\\distance-robot-control\\meca500_ethercat_cpp\\sun_etherCAT\\SOEM\\osal\\win32\\osal.c",
+  "file": "C:/distance-robot-control/meca500_ethercat_cpp/sun_etherCAT/SOEM/osal/win32/osal.c",
+  "output": "meca500_ethercat_cpp/sun_etherCAT/SOEM/CMakeFiles/soem.dir/osal/win32/osal.c.obj"
+},
+{
+  "directory": "C:/distance-robot-control/build/meca500_ethercat_cpp/sun_etherCAT/SOEM",
+  "command": "G:\\msys2\\ucrt64\\bin\\gcc.exe  @CMakeFiles/soem.dir/includes_C.rsp  /D _CRT_SECURE_NO_WARNINGS  /WX -g -o CMakeFiles\\soem.dir\\oshw\\win32\\nicdrv.c.obj -c C:\\distance-robot-control\\meca500_ethercat_cpp\\sun_etherCAT\\SOEM\\oshw\\win32\\nicdrv.c",
+  "file": "C:/distance-robot-control/meca500_ethercat_cpp/sun_etherCAT/SOEM/oshw/win32/nicdrv.c",
+  "output": "meca500_ethercat_cpp/sun_etherCAT/SOEM/CMakeFiles/soem.dir/oshw/win32/nicdrv.c.obj"
+},
+{
+  "directory": "C:/distance-robot-control/build/meca500_ethercat_cpp/sun_etherCAT/SOEM",
+  "command": "G:\\msys2\\ucrt64\\bin\\gcc.exe  @CMakeFiles/soem.dir/includes_C.rsp  /D _CRT_SECURE_NO_WARNINGS  /WX -g -o CMakeFiles\\soem.dir\\oshw\\win32\\oshw.c.obj -c C:\\distance-robot-control\\meca500_ethercat_cpp\\sun_etherCAT\\SOEM\\oshw\\win32\\oshw.c",
+  "file": "C:/distance-robot-control/meca500_ethercat_cpp/sun_etherCAT/SOEM/oshw/win32/oshw.c",
+  "output": "meca500_ethercat_cpp/sun_etherCAT/SOEM/CMakeFiles/soem.dir/oshw/win32/oshw.c.obj"
+},
+{
+  "directory": "C:/distance-robot-control/build/meca500_ethercat_cpp/sun_etherCAT/sun_scheduling",
+  "command": "G:\\msys2\\ucrt64\\bin\\gcc.exe  @CMakeFiles/sun_scheduling.dir/includes_C.rsp -g -o CMakeFiles\\sun_scheduling.dir\\src\\scheduling.c.obj -c C:\\distance-robot-control\\meca500_ethercat_cpp\\sun_etherCAT\\sun_scheduling\\src\\scheduling.c",
+  "file": "C:/distance-robot-control/meca500_ethercat_cpp/sun_etherCAT/sun_scheduling/src/scheduling.c",
+  "output": "meca500_ethercat_cpp/sun_etherCAT/sun_scheduling/CMakeFiles/sun_scheduling.dir/src/scheduling.c.obj"
+},
+{
+  "directory": "C:/distance-robot-control/build/meca500_ethercat_cpp/sun_etherCAT/sun_slave",
+  "command": "G:\\msys2\\ucrt64\\bin\\g++.exe  @CMakeFiles/sun_slave.dir/includes_CXX.rsp -g -std=gnu++20 -o CMakeFiles\\sun_slave.dir\\src\\ATINano43.cpp.obj -c C:\\distance-robot-control\\meca500_ethercat_cpp\\sun_etherCAT\\sun_slave\\src\\ATINano43.cpp",
+  "file": "C:/distance-robot-control/meca500_ethercat_cpp/sun_etherCAT/sun_slave/src/ATINano43.cpp",
+  "output": "meca500_ethercat_cpp/sun_etherCAT/sun_slave/CMakeFiles/sun_slave.dir/src/ATINano43.cpp.obj"
+},
+{
+  "directory": "C:/distance-robot-control/build/meca500_ethercat_cpp/sun_etherCAT/sun_slave",
+  "command": "G:\\msys2\\ucrt64\\bin\\g++.exe  @CMakeFiles/sun_slave.dir/includes_CXX.rsp -g -std=gnu++20 -o CMakeFiles\\sun_slave.dir\\src\\Meca500.cpp.obj -c C:\\distance-robot-control\\meca500_ethercat_cpp\\sun_etherCAT\\sun_slave\\src\\Meca500.cpp",
+  "file": "C:/distance-robot-control/meca500_ethercat_cpp/sun_etherCAT/sun_slave/src/Meca500.cpp",
+  "output": "meca500_ethercat_cpp/sun_etherCAT/sun_slave/CMakeFiles/sun_slave.dir/src/Meca500.cpp.obj"
+},
+{
+  "directory": "C:/distance-robot-control/build/meca500_ethercat_cpp/sun_etherCAT/sun_controller",
+  "command": "G:\\msys2\\ucrt64\\bin\\g++.exe  @CMakeFiles/sun_controller.dir/includes_CXX.rsp -g -std=gnu++20 -o CMakeFiles\\sun_controller.dir\\src\\Controller.cpp.obj -c C:\\distance-robot-control\\meca500_ethercat_cpp\\sun_etherCAT\\sun_controller\\src\\Controller.cpp",
+  "file": "C:/distance-robot-control/meca500_ethercat_cpp/sun_etherCAT/sun_controller/src/Controller.cpp",
+  "output": "meca500_ethercat_cpp/sun_etherCAT/sun_controller/CMakeFiles/sun_controller.dir/src/Controller.cpp.obj"
+}
+]

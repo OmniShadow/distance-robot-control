@@ -1,0 +1,3 @@
+"C:\Program Files\CMake\bin\cmake.exe" -E rm -f CMakeFiles\robot-test.dir/objects.a
+G:\msys2\ucrt64\bin\ar.exe qc CMakeFiles\robot-test.dir/objects.a @CMakeFiles\robot-test.dir\objects1.rsp
+G:\msys2\ucrt64\bin\g++.exe -g -Wl,--whole-archive CMakeFiles\robot-test.dir/objects.a -Wl,--no-whole-archive -o robot-test.exe -Wl,--out-implib,librobot-test.dll.a -Wl,--major-image-version,0,--minor-image-version,0 @CMakeFiles\robot-test.dir\linkLibs.rsp

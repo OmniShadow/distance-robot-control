@@ -1,0 +1,366 @@
+{
+	"artifacts" : 
+	[
+		{
+			"path" : "test.exe"
+		},
+		{
+			"path" : "test.pdb"
+		}
+	],
+	"backtrace" : 1,
+	"backtraceGraph" : 
+	{
+		"commands" : 
+		[
+			"add_executable",
+			"target_link_libraries",
+			"target_compile_options",
+			"include_directories",
+			"target_compile_features"
+		],
+		"files" : 
+		[
+			"CMakeLists.txt",
+			"meca500_ethercat_cpp/CMakeLists.txt",
+			"meca500_ethercat_cpp/sun_etherCAT/sun_ethercat_master/CMakeLists.txt",
+			"meca500_ethercat_cpp/sun_etherCAT/SOEM/CMakeLists.txt"
+		],
+		"nodes" : 
+		[
+			{
+				"file" : 0
+			},
+			{
+				"command" : 0,
+				"file" : 0,
+				"line" : 5,
+				"parent" : 0
+			},
+			{
+				"command" : 1,
+				"file" : 0,
+				"line" : 21,
+				"parent" : 0
+			},
+			{
+				"command" : 1,
+				"file" : 0,
+				"line" : 23,
+				"parent" : 0
+			},
+			{
+				"command" : 1,
+				"file" : 0,
+				"line" : 24,
+				"parent" : 0
+			},
+			{
+				"command" : 1,
+				"file" : 0,
+				"line" : 25,
+				"parent" : 0
+			},
+			{
+				"file" : 1
+			},
+			{
+				"command" : 1,
+				"file" : 1,
+				"line" : 22,
+				"parent" : 6
+			},
+			{
+				"file" : 2
+			},
+			{
+				"command" : 1,
+				"file" : 2,
+				"line" : 10,
+				"parent" : 8
+			},
+			{
+				"file" : 3
+			},
+			{
+				"command" : 1,
+				"file" : 3,
+				"line" : 76,
+				"parent" : 10
+			},
+			{
+				"command" : 1,
+				"file" : 2,
+				"line" : 11,
+				"parent" : 8
+			},
+			{
+				"command" : 2,
+				"file" : 0,
+				"line" : 22,
+				"parent" : 0
+			},
+			{
+				"command" : 2,
+				"file" : 0,
+				"line" : 29,
+				"parent" : 0
+			},
+			{
+				"command" : 3,
+				"file" : 0,
+				"line" : 6,
+				"parent" : 0
+			},
+			{
+				"command" : 4,
+				"file" : 0,
+				"line" : 28,
+				"parent" : 0
+			}
+		]
+	},
+	"compileGroups" : 
+	[
+		{
+			"compileCommandFragments" : 
+			[
+				{
+					"fragment" : "-g -std=gnu++20"
+				},
+				{
+					"backtrace" : 13,
+					"fragment" : "-Wall"
+				},
+				{
+					"backtrace" : 13,
+					"fragment" : "-pthread"
+				},
+				{
+					"backtrace" : 14,
+					"fragment" : "-lpthread"
+				}
+			],
+			"includes" : 
+			[
+				{
+					"backtrace" : 15,
+					"path" : "C:/distance-robot-control"
+				},
+				{
+					"backtrace" : 2,
+					"path" : "C:/distance-robot-control/distance_sensor"
+				},
+				{
+					"backtrace" : 2,
+					"path" : "C:/distance-robot-control/distance_sensor/include"
+				},
+				{
+					"backtrace" : 4,
+					"path" : "C:/distance-robot-control/meca500_ethercat_cpp/include"
+				},
+				{
+					"backtrace" : 4,
+					"path" : "C:/distance-robot-control/meca500_ethercat_cpp/sun_etherCAT/sun_ethercat_master/include"
+				},
+				{
+					"backtrace" : 4,
+					"path" : "C:/distance-robot-control/meca500_ethercat_cpp/sun_etherCAT/SOEM/soem"
+				},
+				{
+					"backtrace" : 4,
+					"path" : "C:/distance-robot-control/meca500_ethercat_cpp/sun_etherCAT/SOEM/osal"
+				},
+				{
+					"backtrace" : 4,
+					"path" : "C:/distance-robot-control/meca500_ethercat_cpp/sun_etherCAT/SOEM/osal/win32"
+				},
+				{
+					"backtrace" : 4,
+					"path" : "C:/distance-robot-control/meca500_ethercat_cpp/sun_etherCAT/SOEM/oshw/win32"
+				},
+				{
+					"backtrace" : 4,
+					"path" : "C:/distance-robot-control/meca500_ethercat_cpp/sun_etherCAT/sun_scheduling/include"
+				},
+				{
+					"backtrace" : 4,
+					"path" : "C:/distance-robot-control/meca500_ethercat_cpp/sun_etherCAT/sun_slave/include"
+				},
+				{
+					"backtrace" : 4,
+					"path" : "C:/distance-robot-control/meca500_ethercat_cpp/sun_etherCAT/sun_controller/include"
+				},
+				{
+					"backtrace" : 5,
+					"path" : "C:/distance-robot-control/csvlogger"
+				}
+			],
+			"language" : "CXX",
+			"languageStandard" : 
+			{
+				"backtraces" : 
+				[
+					16
+				],
+				"standard" : "20"
+			},
+			"sourceIndexes" : 
+			[
+				0
+			]
+		}
+	],
+	"dependencies" : 
+	[
+		{
+			"backtrace" : 5,
+			"id" : "csvlogger::@1a3c8416fef3c47e6937"
+		},
+		{
+			"backtrace" : 2,
+			"id" : "distance_sensor::@d91abfe00298575ef264"
+		},
+		{
+			"backtrace" : 4,
+			"id" : "soem::@4917ea832fac821e5f5e"
+		},
+		{
+			"backtrace" : 4,
+			"id" : "sun_ethercat_master::@2085fa3529aaccc6eb24"
+		},
+		{
+			"backtrace" : 4,
+			"id" : "meca500_driver::@b7a2028e9684a8b66634"
+		},
+		{
+			"backtrace" : 4,
+			"id" : "sun_slave::@51a2b3c8632b2fad8715"
+		},
+		{
+			"backtrace" : 4,
+			"id" : "sun_scheduling::@5c9da8718bafa3247075"
+		},
+		{
+			"backtrace" : 4,
+			"id" : "sun_controller::@5ef33cc96a584b488e0c"
+		}
+	],
+	"id" : "test::@6890427a1f51a3e7e1df",
+	"link" : 
+	{
+		"commandFragments" : 
+		[
+			{
+				"fragment" : "-g",
+				"role" : "flags"
+			},
+			{
+				"fragment" : "",
+				"role" : "flags"
+			},
+			{
+				"backtrace" : 2,
+				"fragment" : "distance_sensor\\libdistance_sensor.dll.a",
+				"role" : "libraries"
+			},
+			{
+				"backtrace" : 3,
+				"fragment" : "-lpigpio",
+				"role" : "libraries"
+			},
+			{
+				"backtrace" : 3,
+				"fragment" : "-lrt",
+				"role" : "libraries"
+			},
+			{
+				"backtrace" : 4,
+				"fragment" : "meca500_ethercat_cpp\\libmeca500_driver.a",
+				"role" : "libraries"
+			},
+			{
+				"backtrace" : 5,
+				"fragment" : "csvlogger\\libcsvlogger.a",
+				"role" : "libraries"
+			},
+			{
+				"backtrace" : 7,
+				"fragment" : "meca500_ethercat_cpp\\sun_etherCAT\\sun_controller\\libsun_controller.a",
+				"role" : "libraries"
+			},
+			{
+				"backtrace" : 7,
+				"fragment" : "meca500_ethercat_cpp\\sun_etherCAT\\sun_slave\\libsun_slave.a",
+				"role" : "libraries"
+			},
+			{
+				"backtrace" : 7,
+				"fragment" : "meca500_ethercat_cpp\\sun_etherCAT\\sun_ethercat_master\\libsun_ethercat_master.a",
+				"role" : "libraries"
+			},
+			{
+				"backtrace" : 9,
+				"fragment" : "meca500_ethercat_cpp\\sun_etherCAT\\SOEM\\libsoem.a",
+				"role" : "libraries"
+			},
+			{
+				"backtrace" : 11,
+				"fragment" : "-lwpcap",
+				"role" : "libraries"
+			},
+			{
+				"backtrace" : 11,
+				"fragment" : "-lPacket",
+				"role" : "libraries"
+			},
+			{
+				"backtrace" : 11,
+				"fragment" : "-lWs2_32",
+				"role" : "libraries"
+			},
+			{
+				"backtrace" : 11,
+				"fragment" : "-lWinmm",
+				"role" : "libraries"
+			},
+			{
+				"backtrace" : 12,
+				"fragment" : "meca500_ethercat_cpp\\sun_etherCAT\\sun_scheduling\\libsun_scheduling.a",
+				"role" : "libraries"
+			},
+			{
+				"fragment" : "-lkernel32 -luser32 -lgdi32 -lwinspool -lshell32 -lole32 -loleaut32 -luuid -lcomdlg32 -ladvapi32",
+				"role" : "libraries"
+			}
+		],
+		"language" : "CXX"
+	},
+	"name" : "test",
+	"nameOnDisk" : "test.exe",
+	"paths" : 
+	{
+		"build" : ".",
+		"source" : "."
+	},
+	"sourceGroups" : 
+	[
+		{
+			"name" : "Source Files",
+			"sourceIndexes" : 
+			[
+				0
+			]
+		}
+	],
+	"sources" : 
+	[
+		{
+			"backtrace" : 1,
+			"compileGroupIndex" : 0,
+			"path" : "test_regolatore.cpp",
+			"sourceGroupIndex" : 0
+		}
+	],
+	"type" : "EXECUTABLE"
+}

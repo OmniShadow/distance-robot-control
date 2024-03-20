@@ -1,0 +1,2 @@
+G:\msys2\ucrt64\bin\ar.exe qc libsun_ethercat_master.a CMakeFiles/sun_ethercat_master.dir/src/Master.cpp.obj
+G:\msys2\ucrt64\bin\ranlib.exe libsun_ethercat_master.a

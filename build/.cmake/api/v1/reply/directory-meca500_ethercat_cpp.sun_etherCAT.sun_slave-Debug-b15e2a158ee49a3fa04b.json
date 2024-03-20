@@ -1,0 +1,14 @@
+{
+	"backtraceGraph" : 
+	{
+		"commands" : [],
+		"files" : [],
+		"nodes" : []
+	},
+	"installers" : [],
+	"paths" : 
+	{
+		"build" : "meca500_ethercat_cpp/sun_etherCAT/sun_slave",
+		"source" : "meca500_ethercat_cpp/sun_etherCAT/sun_slave"
+	}
+}

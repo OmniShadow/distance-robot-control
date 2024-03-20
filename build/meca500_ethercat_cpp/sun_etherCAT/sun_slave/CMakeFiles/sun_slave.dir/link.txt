@@ -1,0 +1,2 @@
+G:\msys2\ucrt64\bin\ar.exe qc libsun_slave.a CMakeFiles/sun_slave.dir/src/ATINano43.cpp.obj CMakeFiles/sun_slave.dir/src/Meca500.cpp.obj
+G:\msys2\ucrt64\bin\ranlib.exe libsun_slave.a

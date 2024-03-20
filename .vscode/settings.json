@@ -1,0 +1,12 @@
+{
+    "C_Cpp.default.compilerPath": "C:\\MinGW\\bin\\g++.exe",
+    "files.associations": {
+        "*.embeddedhtml": "html",
+        "vector": "cpp",
+        "iostream": "cpp",
+        "ostream": "cpp",
+        "atomic": "cpp",
+        "format": "cpp",
+        "iomanip": "cpp"
+    }
+}
