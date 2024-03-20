@@ -18,7 +18,7 @@
 #include <iostream>
 #include <math.h>
 #include <chrono>
-#include <Regolatore.cpp>
+#include <Regolatore.hpp>
 
 /*costants*/
 #define DEFAULT_SAMPLE_TIME 0.02               // sampling period in seconds

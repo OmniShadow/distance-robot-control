@@ -1,8 +1,7 @@
-#include "distance_sensor/include/DistanceSensor.hpp"
 #include "distance_sensor/include/InfraredSensor.hpp"
 #include "meca500_ethercat_cpp/Robot.hpp"
 #include "csvlogger/CsvLogger.hpp"
-#include <Regolatore.cpp>
+#include <Regolatore.hpp>
 #include <vector>
 #include <unistd.h>
 #include <iostream>
@@ -88,6 +87,12 @@ float slope = (distanzaRiferimento - starting_reference) / rise_time;
 float interpolate_time = 0;
 bool out_of_range = false;
 
+uint64_t t0, start;
+float current_time = 0;
+uint64_t delay_time;
+
+float velocity[] = {0, 0, 0, 0, 0, 0};
+
 float error = 0;
 float output = 0;
 
@@ -103,6 +108,130 @@ int main(int argc, char const *argv[])
     riceviOpzioni.join();
 
     return 0;
+}
+
+void controlLoop()
+{
+    cout << "Initializing control loop" << endl;
+
+    while (isRunning)
+    {
+        start = getCurrentTimeMicros();
+
+        /*compute distance*/
+        currentDistance = infraredSensor->getDistanceInMillimeters();
+        starting_reference = currentDistance;
+
+        /*OUT OF RANGE CASE (example: obstacle removed) */
+        if (currentDistance > 200)
+        {
+            handleOutOfRange();
+        }
+
+        /* interpolation */
+        if (interpolate)
+        {
+            interpolateReference();
+        }
+
+        /* computing error and output */
+        error = reference_distance - currentDistance;
+        output = regolatore->calculate_output(error);
+        /* safety control: checking robot position limits */
+        if (robot.get_position() >= robot.POS_LIMIT_SUP)
+        {
+            if (output > 0) // if velocity is positive
+            {
+                output = 0;
+            }
+        }
+        else if (robot.get_position() <= robot.POS_LIMIT_INF)
+        {
+            if (output < 0) // if velocity is negative
+            {
+                output = 0;
+            }
+        }
+
+        /*give meca velocity command*/
+        velocity[0] = output;
+        robot.move_lin_vel_wrf(velocity);
+
+        /*export data*/
+        // "time,reference,position,measured_distance,error,velocity_control"
+        writeDataToCsv(current_time, reference_distance, robot->get_position(), currentDistance, error, output);
+
+        /*delay*/
+        delay_time = SAMPLING_TIME * 1e6 - (getCurrentTimeMicros() - start);
+        std::this_thread::sleep_for(std::chrono::microseconds(delay_time)); // Print every second
+        current_time += SAMPLING_TIME;                                      // increse time by Tc_s for reference smoothing
+    }
+}
+
+void handleOutOfRange()
+{
+    cout << "Sensor out of range.. stopping robot\n";
+    cout << "Waiting for Obstacle in range..\n";
+
+    /*stop Meca*/
+    velocity[0] = 0;
+    regolatore->reset();
+    robot.move_lin_vel_wrf(velocity);
+    /*wait for obstacle.*/
+
+    while (currentDistance > 200)
+    {
+        start = getCurrentTimeMicros();
+        currentDistance = infraredSensor->getDistanceInMillimeters();
+
+        /*export data*/
+        writeDataToCsv(current_time, reference_distance, robot->get_position(), currentDistance, distanzaRiferimento - currentDistance, 0);
+        /*compute dalay*/
+        delay_time = SAMPLING_TIME * 1e6 - (getCurrentTimeMicros() - start);
+        std::this_thread::sleep_for(std::chrono::microseconds(delay_time));
+        current_time += SAMPLING_TIME;
+    }
+
+    cout << "Obstacle in range.. resuming control\n";
+
+    /*new interpolation needed, preparation (see interpolation)*/
+    interpolate = true;
+    starting_reference = currentDistance;
+    slope = (distanzaRiferimento - starting_reference) / rise_time;
+    interpolate_time = current_time;
+}
+
+void interpolateReference()
+{
+    reference_distance = slope * (current_time - interpolate_time) + starting_reference;
+    if ((slope > 0 && reference_distance >= distanzaRiferimento) || (slope <= 0 && reference_distance <= reference_user))
+    {
+        reference_distance = distanzaRiferimento;
+        interpolate = false;
+    }
+}
+
+// Function for the thread that gets input from the user to update the shared value
+void riceviOpzioni()
+{
+    string input;
+    while (isRunning)
+    {
+        cout << "Inserisci comandi da eseguire --commandname=commandvalue [--help]: " << endl;
+        getline(std::cin, input);
+
+        vector<string> tokens = splitString(input);
+
+        int argc = tokens.size();
+        char **argv = new char *[argc];
+        for (int i = 0; i < argc; ++i)
+        {
+            argv[i] = new char[tokens[i].size() + 1];
+            std::strcpy(argv[i], tokens[i].c_str());
+        }
+
+        executeOptions(parseOptionTokens(argc, argv));
+    }
 }
 
 void setup()
@@ -156,124 +285,6 @@ void writeDataToCsv(float time, float reference, float position, float measured_
     data_test << 0;
     data_test << 0;
     data_test.end_row();
-}
-
-void controlLoop()
-{
-    uint64_t t0, start;
-    float current_time = 0;
-    uint64_t delay_time;
-
-    float velocity[] = {0, 0, 0, 0, 0, 0};
-    while (isRunning)
-    {
-        start = getCurrentTimeMicros();
-
-        /*compute distance*/
-        currentDistance = infraredSensor->getDistanceInMillimeters();
-        starting_reference = currentDistance;
-
-        /*OUT OF RANGE CASE (example: obstacle removed) */
-        if (currentDistance > 200)
-        {
-            cout << "Sensor out of range.. stopping robot\n";
-            cout << "Waiting for Obstacle in range..\n";
-
-            /*stop Meca*/
-            velocity[0] = 0;
-            regolatore->reset();
-            robot.move_lin_vel_wrf(velocity);
-            /*wait for obstacle.*/
-
-            while (currentDistance > 200)
-            {
-                start = getCurrentTimeMicros();
-                currentDistance = infraredSensor->getDistanceInMillimeters();
-
-                /*export data*/
-                writeDataToCsv(current_time, reference_distance, robot->get_position(), currentDistance, distanzaRiferimento - currentDistance, 0);
-                /*compute dalay*/
-                delay_time = Tc_s * 1e6 - (getCurrentTimeMicros() - start);
-                std::this_thread::sleep_for(std::chrono::microseconds(delay_time));
-                current_time += Tc_s;
-            }
-
-            cout << "Obstacle in range.. resuming control\n";
-
-            /*new interpolation needed, preparation (see interpolation)*/
-            interpolate = true;
-            starting_reference = currentDistance;
-            slope = (distanzaRiferimento - starting_reference) / rise_time;
-            interpolate_time = current_time;
-        }
-
-        /* interpolation */
-        if (interpolate)
-        {
-            reference_distance = slope * (current_time - interpolate_time) + starting_reference;
-            if ((slope > 0 && reference_distance >= distanzaRiferimento) || (slope <= 0 && reference_distance <= reference_user))
-            {
-                reference_distance = distanzaRiferimento;
-                interpolate = false;
-            }
-        }
-
-        /* computing error and output */
-        error = reference_distance - currentDistance;
-        output = regolatore->calculate_output(error);
-        /* safety control: checking robot position limits */
-        if (robot.get_position() >= robot.POS_LIMIT_SUP)
-        {
-            if (output > 0) // if velocity is positive
-            {
-                output = 0;
-            }
-        }
-        else if (robot.get_position() <= robot.POS_LIMIT_INF)
-        {
-            if (output < 0) // if velocity is negative
-            {
-                output = 0;
-            }
-        }
-
-        /*give meca velocity command*/
-        velocity[0] = output;
-        robot.move_lin_vel_wrf(velocity);
-
-        /*export data*/
-        // "time,reference,position,measured_distance,error,velocity_control"
-        writeDataToCsv(current_time, reference_distance, robot->get_position(), currentDistance, error, output);
-
-        /*delay*/
-        delay_time = Tc_s * 1e6 - (getCurrentTimeMicros() - start);
-        current_time += Tc_s; // increse time by Tc_s for reference smoothing
-
-        std::this_thread::sleep_for(std::chrono::microseconds(delay_time)); // Print every second
-    }
-}
-
-// Function for the thread that gets input from the user to update the shared value
-void riceviOpzioni()
-{
-    string input;
-    while (isRunning)
-    {
-        cout << "Inserisci comandi da eseguire --commandname=commandvalue [--help]: " << endl;
-        getline(std::cin, input);
-
-        vector<string> tokens = splitString(input);
-
-        int argc = tokens.size();
-        char **argv = new char *[argc];
-        for (int i = 0; i < argc; ++i)
-        {
-            argv[i] = new char[tokens[i].size() + 1];
-            std::strcpy(argv[i], tokens[i].c_str());
-        }
-
-        executeOptions(parseOptionTokens(argc, argv));
-    }
 }
 
 void setupCommandHandlers()

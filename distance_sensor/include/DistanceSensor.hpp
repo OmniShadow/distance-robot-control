@@ -1,6 +1,5 @@
 #ifndef DISTANCESENSOR_HPP
 #define DISTANCESENSOR_HPP
-#include <pigpio.h>
 class DistanceSensor
 {
 public:
