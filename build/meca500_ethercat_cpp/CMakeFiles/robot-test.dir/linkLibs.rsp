@@ -1,1 +1,0 @@
- libmeca500_driver.a sun_etherCAT/sun_controller/libsun_controller.a sun_etherCAT/sun_slave/libsun_slave.a sun_etherCAT/sun_ethercat_master/libsun_ethercat_master.a sun_etherCAT/SOEM/libsoem.a -lwpcap -lPacket -lWs2_32 -lWinmm sun_etherCAT/sun_scheduling/libsun_scheduling.a -lkernel32 -luser32 -lgdi32 -lwinspool -lshell32 -lole32 -loleaut32 -luuid -lcomdlg32 -ladvapi32 

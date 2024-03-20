@@ -18,6 +18,7 @@
 #include <iostream>
 #include <math.h>
 #include <chrono>
+#include <Regolatore.cpp>
 
 /*costants*/
 #define DEFAULT_SAMPLE_TIME 0.02               // sampling period in seconds
@@ -34,10 +35,22 @@ float m = 1;
 float q = 0;
 float Tc_s = DEFAULT_SAMPLE_TIME;
 
+Regolatore *regolatore = nullptr;
+
 /*FUNCTIONS*/
 void menu(int n_par, char *par[]);             // manage user input from cmd
 uint64_t getCurrentTimeMicros();               // return current time in microseconds
 void delayMicroseconds(uint64_t microseconds); // pause execution
+
+void setupRegulator()
+{
+    double pole_1 = 0.6;
+    double zero_1 = 0.7967;
+    double gain = 1.6334;
+    vector<double> input_coeff{gain, -gain * zero_1};
+    vector<double> output_coeff{2 * pole_1, -pole_1 * pole_1};
+    regolatore = new Regolatore(output_coeff, input_coeff);
+}
 
 int main(int argc, char *argv[])
 {
@@ -45,6 +58,8 @@ int main(int argc, char *argv[])
     menu(argc, argv);
     /*sensor setup*/
     sensor.useCalibrationCurve(m, q);
+
+    setupRegulator();
 
     /*robot, setup*/
     Robot robot(30, 200, 5000, "eth0", 0.0, 10);
@@ -60,8 +75,8 @@ int main(int argc, char *argv[])
 
     /*time variables setup*/
     uint64_t t0, start;
-    float current_time = 0;
-    float delay_time;
+    float currentTime = 0;
+    uint64_t delayInterval;
 
     /*interpolation variables*/
     /*variable for interpolation
@@ -78,70 +93,66 @@ int main(int argc, char *argv[])
     bool out_of_range = false;
 
     /*other storage variables*/
-    float d;
+    float currentDistance;
     float velocity[] = {0, 0, 0, 0, 0, 0};
 
     /*process variables and state variables*/
-    float u_k;      // u[k]
-    float y_k;      // y[k]
-    float y_k1 = 0; // y[k-1]
-    float u_k1 = 0; // u[k-1]
-
+    float error;      // u[k]
+    float output;      // y[k]
     /*control*/
     while (true)
     {
         start = getCurrentTimeMicros();
 
         /*compute distance*/
-        d = -sensor.getDistanceInMillimeters();
+        currentDistance = -sensor.getDistanceInMillimeters();
 
         /*OUT OF RANGE CASE (example: obstacle removed) */
-        if (d < -200)
+        if (currentDistance < -200)
         {
             cout << "Sensor out of range.. stopping robot\n";
             cout << "Waiting for Obstacle in range..\n";
 
             /*stop Meca*/
-            velocity[0] = 0;
+            vvelocity[0] = 0;
+            regolatore->reset();
             robot.move_lin_vel_wrf(velocity);
-            y_k1 = 0;
-            u_k1 = 0;
 
             /*wait for obstacle.*/
 
-            while (d < -200)
+            while (currentDistance < -200)
             {
                 start = getCurrentTimeMicros();
-                d = -sensor.getDistanceInMillimeters();
+                currentDistance = -sensor.getDistanceInMillimeters();
 
                 /*export data*/
-                data_test << current_time;
+                data_test << currentTime;
                 data_test << reference_distance;
                 data_test << robot.get_position();
-                data_test << d;
+                data_test << currentDistance;
                 data_test << 0;
                 data_test << 0;
                 data_test.end_row();
 
                 /*compute dalay*/
-                delay_time = Tc_s * 1e6 - (getCurrentTimeMicros() - start);
-                delayMicroseconds(delay_time);
-                current_time += Tc_s;
+                delayInterval = Tc_s * 1e6 - (getCurrentTimeMicros() - start);
+                delayMicroseconds(delayInterval);
+                currentTime += Tc_s;
             }
 
             cout << "Obstacle in range.. resuming control\n";
 
             /*new interpolation needed, preparation (see interpolation)*/
             interpolate = true;
-            starting_reference = d;
+            starting_reference = currentDistance;
             slope = (reference_user - starting_reference) / rise_time;
-            interpolate_time = current_time;
+            interpolate_time = currentTime;
         }
 
         /* interpolation */
         if (interpolate)
         {
-            reference_distance = slope * (current_time - interpolate_time) + starting_reference;
+            reference_distance = slope * (currentTime - interpolate_time) + starting_reference;
             if ((slope > 0 && reference_distance >= reference_user) || (slope <= 0 && reference_distance <= reference_user))
             {
                 reference_distance = reference_user;
@@ -150,47 +161,43 @@ int main(int argc, char *argv[])
         }
 
         /* computing */
-        u_k = reference_distance - d;
-        y_k = 4.6129 * u_k - 3.8864 * u_k1 + 0.7 * y_k1;
+        error = reference_distance - currentDistance;
+        output = regolatore->calculate_output(error);
 
         /* safety control: checking robot position limits */
         if (robot.get_position() >= robot.POS_LIMIT_SUP)
         {
-            if (y_k > 0) // if velocity is positive
+            if (output > 0) // if velocity is positive
             {
-                y_k = 0;
+                output = 0;
             }
         }
         else if (robot.get_position() <= robot.POS_LIMIT_INF)
         {
-            if (y_k < 0) // if velocity is negative
+            if (output < 0) // if velocity is negative
             {
-                y_k = 0;
+                output = 0;
             }
         }
 
         /*give meca velocity command*/
-        velocity[0] = y_k;
+        velocity[0] = output;
         robot.move_lin_vel_wrf(velocity);
 
         /*export data*/
         // "time,reference,position,measured_distance,error,velocity_control"
-        data_test << current_time;
+        data_test << currentTime;
         data_test << reference_distance;
         data_test << robot.get_position();
-        data_test << d;
-        data_test << u_k;
-        data_test << y_k;
+        data_test << currentDistance;
+        data_test << error;
+        data_test << output;
         data_test.end_row();
 
-        /*prepare for next */
-        u_k1 = u_k;
-        y_k1 = y_k;
-
         /*delay*/
-        delay_time = Tc_s * 1e6 - (getCurrentTimeMicros() - start);
-        delayMicroseconds(delay_time); // delay by time remaining
-        current_time += Tc_s;          // increse time by Tc_s for reference smoothing
+        delayInterval = Tc_s * 1e6 - (getCurrentTimeMicros() - start);
+        delayMicroseconds(delayInterval); // delay by time remaining
+        currentTime += Tc_s;          // increse time by Tc_s for reference smoothing
     }
 }
 

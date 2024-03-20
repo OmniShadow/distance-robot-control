@@ -88,7 +88,7 @@ float slope = (distanzaRiferimento - starting_reference) / rise_time;
 float interpolate_time = 0;
 bool out_of_range = false;
 
-float input = 0;
+float error = 0;
 float output = 0;
 
 int main(int argc, char const *argv[])
@@ -99,7 +99,7 @@ int main(int argc, char const *argv[])
     std::thread riceviOpzioni();
 
     // Wait for threads to finish execution
-    controllo.join();
+    controlLoop.join();
     riceviOpzioni.join();
 
     return 0;
@@ -131,13 +131,13 @@ void setupRobot()
 
 void setupRegulator()
 {
-    double pole_1 = 0.6;
-    double zero_1 = 0.7967;
-    double gain = 1.6334;
-    double input = 0;
-    double output = 0;
-    vector<double> input_coeff{gain, -gain * zero_1};
-    vector<double> output_coeff{2 * pole_1, -pole_1 * pole_1};
+    float pole_1 = 0.6;
+    float zero_1 = 0.7967;
+    float gain = 1.6334;
+    float input = 0;
+    float output = 0;
+    vector<float> input_coeff{gain, -gain * zero_1};
+    vector<float> output_coeff{2 * pole_1, -pole_1 * pole_1};
     regolatore = new Regolatore(output_coeff, input_coeff);
 }
 
@@ -218,9 +218,9 @@ void controlLoop()
             }
         }
 
-        /* computing */
-        input = reference_distance - currentDistance;
-        output = regolatore->calculate_output(input);
+        /* computing error and output */
+        error = reference_distance - currentDistance;
+        output = regolatore->calculate_output(error);
         /* safety control: checking robot position limits */
         if (robot.get_position() >= robot.POS_LIMIT_SUP)
         {
@@ -243,7 +243,7 @@ void controlLoop()
 
         /*export data*/
         // "time,reference,position,measured_distance,error,velocity_control"
-        writeDataToCsv(current_time, reference_distance, robot->get_position(), currentDistance, input, output);
+        writeDataToCsv(current_time, reference_distance, robot->get_position(), currentDistance, error, output);
 
         /*delay*/
         delay_time = Tc_s * 1e6 - (getCurrentTimeMicros() - start);
