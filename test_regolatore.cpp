@@ -66,7 +66,6 @@ vector<float> parseStringToVector(string input);
 
 int executeOptions(map<string, string> options);
 
-
 string handleHelp(string value);
 string handleStop(string value);
 string handleRef(string value);
@@ -74,7 +73,7 @@ string handleCalibration(string value);
 void handleOutOfRange();
 void interpolateReference();
 
-void writeDataToCsv(float time, float reference, float position, float measured_distance, float error, float velocity_control,CsvLogger &logger);
+void writeDataToCsv(float time, float reference, float position, float measured_distance, float error, float velocity_control, CsvLogger &logger);
 
 void controlLoop();
 void riceviOpzioni();
@@ -129,7 +128,7 @@ void controlLoop()
         start = getCurrentTimeMicros();
 
         /*compute distance*/
-        currentDistance = - infraredSensor->getDistanceInMillimeters();
+        currentDistance = -infraredSensor->getDistanceInMillimeters();
         starting_reference = currentDistance;
 
         /*OUT OF RANGE CASE (example: obstacle removed) */
@@ -239,7 +238,7 @@ void riceviOpzioni()
             argv[i] = new char[tokens[i].size() + 1];
             std::strcpy(argv[i], tokens[i].c_str());
         }
-        
+
         executeOptions(parseOptionTokens(argc, argv));
     }
 }
@@ -344,7 +343,11 @@ string handleRef(string value)
 {
     stringstream optionMessage;
     optionMessage << left << setw(message_length) << "Riferimento impostato a: " << value << "\n";
-    distanzaRiferimentoFinale = stof(value);
+    distanzaRiferimentoFinale = -stof(value);
+    starting_reference = currentDistance;
+    slope = (distanzaRiferimentoFinale - starting_reference) / rise_time;
+    interpolate_time = current_time;
+    interpolate = true;
     return optionMessage.str();
 }
 
