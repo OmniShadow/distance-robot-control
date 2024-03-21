@@ -25,7 +25,7 @@
 #define message_length 30
 
 #define SAMPLING_TIME 0.02
-#define DEFAULT_REFERENCE_mm 50
+#define DEFAULT_REFERENCE_mm -50
 
 using namespace std;
 stringstream helpMessage;
@@ -129,7 +129,7 @@ void controlLoop()
         start = getCurrentTimeMicros();
 
         /*compute distance*/
-        currentDistance = infraredSensor->getDistanceInMillimeters();
+        currentDistance = - infraredSensor->getDistanceInMillimeters();
         starting_reference = currentDistance;
 
         /*OUT OF RANGE CASE (example: obstacle removed) */
@@ -189,10 +189,10 @@ void handleOutOfRange()
     robot->move_lin_vel_wrf(velocity);
     /*wait for obstacle.*/
 
-    while (currentDistance > 200)
+    while (currentDistance < -200)
     {
         start = getCurrentTimeMicros();
-        currentDistance = infraredSensor->getDistanceInMillimeters();
+        currentDistance = -infraredSensor->getDistanceInMillimeters();
 
         /*export data*/
         writeDataToCsv(current_time, distanzaRiferimentoAttuale, robot->get_position(), currentDistance, distanzaRiferimentoFinale - currentDistance, 0, *logger);
