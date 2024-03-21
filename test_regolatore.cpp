@@ -359,8 +359,6 @@ string handleStop(string value)
 string handlePause(string value)
 {
     cout << "Pausing control\n";
-    float vel[] = {0, 0, 0, 0, 0, 0};
-    robot->move_lin_vel_wrf(vel);
     if (controlLoopActive)
     {
         cout << "Pausing control loop type --pause again to resume" << endl;
@@ -370,8 +368,6 @@ string handlePause(string value)
         cout << "Resuming control loop..." << endl;
     }
     controlLoopActive = !controlLoopActive;
-    float vel[] = {0, 0, 0, 0, 0, 0};
-    robot->move_lin_vel_wrf(vel);
     return "";
 }
 
