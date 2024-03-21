@@ -154,7 +154,7 @@ void controlLoop()
         distanzaRiferimentoIniziale = currentDistance;
 
         /*OUT OF RANGE CASE (example: obstacle removed) */
-        if (currentDistance > 200)
+        if (currentDistance < -200)
         {
             handleOutOfRange();
         }
@@ -313,8 +313,8 @@ void writeDataToCsv(float time, float reference, float position, float measured_
     logger << distanzaRiferimentoAttuale;
     logger << robot->get_position();
     logger << currentDistance;
-    logger << 0;
-    logger << 0;
+    logger << error;
+    logger << output;
     logger.end_row();
 }
 
