@@ -290,7 +290,7 @@ void writeDataToCsv(float time, float reference, float position, float measured_
     logger << currentDistance;
     logger << 0;
     logger << 0;
-    logger->end_row();
+    logger.end_row();
 }
 
 void setupCommandHandlers()
