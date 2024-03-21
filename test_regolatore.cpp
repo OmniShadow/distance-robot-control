@@ -58,10 +58,14 @@ void setupRobot();
 void setupRegulator();
 void setupCsvLogger();
 void setupHelpMessages();
+void setupCommandHandlers();
 
 vector<std::string> splitString(const string &input);
 map<string, string> parseOptionTokens(int argc, char *argv[]);
 vector<float> parseStringToVector(string input);
+
+int executeOptions(map<string, string> options);
+
 
 string handleHelp(string value);
 string handleStop(string value);
