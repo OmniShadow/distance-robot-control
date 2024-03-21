@@ -279,13 +279,13 @@ void setupCsvLogger()
 
 void writeDataToCsv(float time, float reference, float position, float measured_distance, float error, float velocity_control)
 {
-    data_test << current_time;
-    data_test << reference_distance;
-    data_test << robot.get_position();
-    data_test << currentDistance;
-    data_test << 0;
-    data_test << 0;
-    data_test.end_row();
+    data_test* << current_time;
+    data_test* << reference_distance;
+    data_test* << robot.get_position();
+    data_test* << currentDistance;
+    data_test* << 0;
+    data_test* << 0;
+    data_test->end_row();
 }
 
 void setupCommandHandlers()
