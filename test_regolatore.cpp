@@ -285,8 +285,6 @@ void setupRegulator()
     float pole_1 = 0.6;
     float zero_1 = 0.7967;
     float gain = 1.6334;
-    float input = 0;
-    float output = 0;
     vector<float> input_coeff{gain, -gain * zero_1};
     vector<float> output_coeff{2 * pole_1, -pole_1 * pole_1};
     regolatore = new Regolatore(output_coeff, input_coeff);
@@ -351,6 +349,7 @@ string handleStop(string value)
     robot->move_lin_vel_wrf(vel);
     robot->deactivate();
     isRunning = false;
+    controlLoopActive = true;
     return "Program stopped successfully";
 }
 
