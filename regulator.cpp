@@ -18,7 +18,6 @@
 #include <iostream>
 #include <math.h>
 #include <chrono>
-#include <Regolatore.hpp>
 #include <Regolatore.cpp>
 
 /*costants*/
