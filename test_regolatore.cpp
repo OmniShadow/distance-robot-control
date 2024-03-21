@@ -110,12 +110,12 @@ int main(int argc, char const *argv[])
 {
     setup();
     // Create two threads
-    std::thread controlLoop();
-    std::thread riceviOpzioni();
+    std::thread controlLoopThread(controlLoop);
+    std::thread riceviOpzioniThread(riceviOpzioni);
 
     // Wait for threads to finish execution
-    // controlLoop.join();
-    // riceviOpzioni.join();
+    controlLoopThread.join();
+    riceviOpzioniThread.join();
 
     return 0;
 }
