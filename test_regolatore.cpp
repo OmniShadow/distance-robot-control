@@ -399,7 +399,7 @@ string handleCalibration(string value)
 string handleRobotPosition(string value)
 {
     stringstream option_message;
-    vector<float> robot_position_values = parse_string_to_vector(value);
+    vector<float> robot_position_values = parseStringToVector(value);
     if (robot_position_values.size() < 6)
     {
         cerr << "Invalid robot position, not enough arguments" << endl;
