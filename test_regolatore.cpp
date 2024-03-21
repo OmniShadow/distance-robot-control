@@ -19,6 +19,8 @@
 #define STOP_COMMAND "stop"
 #define REFERENCE_COMMAND "rif"
 #define CALIBRATION_CURVE_COMMAND "cal"
+#define ROBOT_POSITION_COMMAND "pose"
+#define PAUSE_COMMAND "pause"
 
 #define optionWidth 60
 #define descriptionWidth 60
@@ -28,13 +30,13 @@
 #define DEFAULT_REFERENCE_mm -50
 
 using namespace std;
+
 stringstream helpMessage;
-
 stringstream stopMessage;
-
+stringstream pauseMessage;
 stringstream refMessage;
-
 stringstream calMessage;
+stringstream robotPositionMessage;
 
 struct OptionHandler
 {
@@ -68,10 +70,12 @@ int executeOptions(map<string, string> options);
 
 string handleHelp(string value);
 string handleStop(string value);
+string handlePause(string value);
 string handleRef(string value);
 string handleCalibration(string value);
 void handleOutOfRange();
 void interpolateReference();
+void moveRobotToPosition(vector<float> robot_position);
 
 void writeDataToCsv(float time, float reference, float position, float measured_distance, float error, float velocity_control, CsvLogger &logger);
 
@@ -80,6 +84,7 @@ void riceviOpzioni();
 
 std::atomic<float> distanzaRiferimentoFinale(DEFAULT_REFERENCE_mm);
 bool isRunning = true;
+bool controlLoopActive = true;
 
 InfraredSensor *infraredSensor = nullptr;
 Robot *robot = nullptr;
@@ -89,11 +94,11 @@ CsvLogger *logger = nullptr;
 float currentDistance;
 
 float distanzaRiferimentoAttuale = DEFAULT_REFERENCE_mm;
-bool interpolate = true;
-float starting_reference = 0;
-float rise_time = 0.5;
-float slope = (distanzaRiferimentoFinale - starting_reference) / rise_time;
-float interpolate_time = 0;
+bool interopolaRiferimento = true;
+float distanzaRiferimentoIniziale = 0;
+float durataInterpolazione = 0.5;
+float pendenzaRettaInterpolante = (distanzaRiferimentoFinale - distanzaRiferimentoIniziale) / durataInterpolazione;
+float tempoInterpolazione = 0;
 bool out_of_range = false;
 
 uint64_t t0, start;
@@ -125,11 +130,15 @@ void controlLoop()
 
     while (isRunning)
     {
+        while (!controlLoopActive)
+        {
+            std::this_thread::sleep_for(std::chrono::milliseconds(500)); // Print every second
+        }
         start = getCurrentTimeMicros();
 
         /*compute distance*/
         currentDistance = -infraredSensor->getDistanceInMillimeters();
-        starting_reference = currentDistance;
+        distanzaRiferimentoIniziale = currentDistance;
 
         /*OUT OF RANGE CASE (example: obstacle removed) */
         if (currentDistance > 200)
@@ -138,7 +147,7 @@ void controlLoop()
         }
 
         /* interpolation */
-        if (interpolate)
+        if (interopolaRiferimento)
         {
             interpolateReference();
         }
@@ -204,19 +213,19 @@ void handleOutOfRange()
     cout << "Obstacle in range.. resuming control\n";
 
     /*new interpolation needed, preparation (see interpolation)*/
-    interpolate = true;
-    starting_reference = currentDistance;
-    slope = (distanzaRiferimentoFinale - starting_reference) / rise_time;
-    interpolate_time = current_time;
+    interopolaRiferimento = true;
+    distanzaRiferimentoIniziale = currentDistance;
+    pendenzaRettaInterpolante = (distanzaRiferimentoFinale - distanzaRiferimentoIniziale) / durataInterpolazione;
+    tempoInterpolazione = current_time;
 }
 
 void interpolateReference()
 {
-    distanzaRiferimentoAttuale = slope * (current_time - interpolate_time) + starting_reference;
-    if ((slope > 0 && distanzaRiferimentoAttuale >= distanzaRiferimentoFinale) || (slope <= 0 && distanzaRiferimentoAttuale <= distanzaRiferimentoFinale))
+    distanzaRiferimentoAttuale = pendenzaRettaInterpolante * (current_time - tempoInterpolazione) + distanzaRiferimentoIniziale;
+    if ((pendenzaRettaInterpolante > 0 && distanzaRiferimentoAttuale >= distanzaRiferimentoFinale) || (pendenzaRettaInterpolante <= 0 && distanzaRiferimentoAttuale <= distanzaRiferimentoFinale))
     {
         distanzaRiferimentoAttuale = distanzaRiferimentoFinale;
-        interpolate = false;
+        interopolaRiferimento = false;
     }
 }
 
@@ -224,6 +233,8 @@ void interpolateReference()
 void riceviOpzioni()
 {
     string input;
+    cin.clear();
+    fflush(stdin);
     while (isRunning)
     {
         cout << "Inserisci comandi da eseguire --commandname=commandvalue [--help]: " << endl;
@@ -302,6 +313,8 @@ void setupCommandHandlers()
     optionHandlers[REFERENCE_COMMAND] = OptionHandler(handleRef, refMessage.str());
     optionHandlers[STOP_COMMAND] = OptionHandler(handleStop, stopMessage.str());
     optionHandlers[CALIBRATION_CURVE_COMMAND] = OptionHandler(handleCalibration, calMessage.str());
+    optionHandlers[ROBOT_POSITION_COMMAND] = OptionHandler(handleRobotPosition, robotPositionMessage.str());
+    optionHandlers[PAUSE_COMMAND] = OptionHandler(handlePause, pauseMessage.str());
 }
 
 int executeOptions(map<string, string> options)
@@ -335,8 +348,24 @@ string handleStop(string value)
     float vel[] = {0, 0, 0, 0, 0, 0};
     robot->move_lin_vel_wrf(vel);
     robot->deactivate();
-    exit(0);
-    return "";
+    isRunning = false;
+    return "Program stopped successfully";
+}
+
+string handlePause(string value)
+{
+    cout << "Pausing control\n";
+    float vel[] = {0, 0, 0, 0, 0, 0};
+    robot->move_lin_vel_wrf(vel);
+    if (controlLoopActive)
+    {
+        cout << "Pausing control loop type --pause again to resume" << endl;
+    }
+    else
+    {
+        cout << "Resuming control loop..." << endl;
+    }
+    controlLoopActive = !controlLoopActive return "";
 }
 
 string handleRef(string value)
@@ -344,10 +373,10 @@ string handleRef(string value)
     stringstream optionMessage;
     optionMessage << left << setw(message_length) << "Riferimento impostato a: " << value << "\n";
     distanzaRiferimentoFinale = -stof(value);
-    starting_reference = currentDistance;
-    slope = (distanzaRiferimentoFinale - starting_reference) / rise_time;
-    interpolate_time = current_time;
-    interpolate = true;
+    distanzaRiferimentoIniziale = currentDistance;
+    pendenzaRettaInterpolante = (distanzaRiferimentoFinale - distanzaRiferimentoIniziale) / durataInterpolazione;
+    tempoInterpolazione = current_time;
+    interopolaRiferimento = true;
     return optionMessage.str();
 }
 
@@ -364,6 +393,33 @@ string handleCalibration(string value)
 
     return optionMessage.str();
 }
+string handleRobotPosition(string value)
+{
+    stringstream option_message;
+    vector<float> robot_position_values = parse_string_to_vector(value);
+    if (robot_position_values.size() < 6)
+    {
+        cerr << "Invalid robot position, not enough arguments" << endl;
+        return "";
+    }
+    option_message << left << setw(message_length) << "Robot pose set to: {";
+    for (float pos : robot_position_values)
+        option_message << pos << ", ";
+    option_message << "}" << endl;
+    moveRobotToPosition(robot_position_values);
+    return option_message.str();
+}
+
+void moveRobotToPosition(vector<float> robot_position)
+{
+    robot->move_pose(
+        robot_position[0],
+        robot_position[1],
+        robot_position[2],
+        robot_position[3],
+        robot_position[4],
+        robot_position[5]);
+}
 
 void setupHelpMessages()
 {
@@ -378,12 +434,22 @@ void setupHelpMessages()
     stopMessage
         << left
         << "  --" << setw(optionWidth) << STOP_COMMAND << setw(descriptionWidth)
-        << "Use robot for measurements" << endl;
+        << "Ferma immediamente l'esecuzione del programma" << endl;
+    pauseMessage
+        << left
+        << "  --" << setw(optionWidth) << PAUSE_COMMAND << setw(descriptionWidth)
+        << "Interrompe l'esecuzione del ciclo di controllo o permette di farlo ripartire" << endl;
     calMessage
         << left
         << "  --" << CALIBRATION_CURVE_COMMAND << setw(optionWidth - strlen(CALIBRATION_CURVE_COMMAND))
         << "=\"{m, q}\""
         << "Specifica i parametri di calibrazione del sensore [default {1, 0} ]" << endl;
+
+    robotPositionMessage
+        << left
+        << "  --" << ROBOT_POSITION_COMMAND << setw(optionWidth - strlen(ROBOT_POSITION_COMMAND))
+        << "=\"{x,y,z,alpha,beta,gamma}\""
+        << "Specify the pose of the meca500 [starting position {115, -170, 120, 90, 90, 0} ]" << endl;
 }
 
 vector<std::string> splitString(const string &input)
