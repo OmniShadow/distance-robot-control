@@ -67,10 +67,15 @@ string handleHelp(string value);
 string handleStop(string value);
 string handleRef(string value);
 string handleCalibration(string value);
+void handleOutOfRange();
+void interpolateReference();
 
 void writeDataToCsv(float time, float reference, float position, float measured_distance, float error, float velocity_control,CsvLogger &logger);
 
-std::atomic<float> distanzaRiferimento(DEFAULT_REFERENCE_mm);
+void controlLoop();
+void riceviOpzioni();
+
+std::atomic<float> distanzaRiferimentoFinale(DEFAULT_REFERENCE_mm);
 bool isRunning = true;
 
 InfraredSensor *infraredSensor = nullptr;
@@ -80,11 +85,11 @@ CsvLogger *logger = nullptr;
 
 float currentDistance;
 
-float reference_distance = DEFAULT_REFERENCE_mm;
+float distanzaRiferimentoAttuale = DEFAULT_REFERENCE_mm;
 bool interpolate = true;
 float starting_reference = 0;
 float rise_time = 0.5;
-float slope = (distanzaRiferimento - starting_reference) / rise_time;
+float slope = (distanzaRiferimentoFinale - starting_reference) / rise_time;
 float interpolate_time = 0;
 bool out_of_range = false;
 
@@ -105,8 +110,8 @@ int main(int argc, char const *argv[])
     std::thread riceviOpzioni();
 
     // Wait for threads to finish execution
-    controlLoop.join();
-    riceviOpzioni.join();
+    // controlLoop.join();
+    // riceviOpzioni.join();
 
     return 0;
 }
@@ -136,17 +141,17 @@ void controlLoop()
         }
 
         /* computing error and output */
-        error = reference_distance - currentDistance;
+        error = distanzaRiferimentoAttuale - currentDistance;
         output = regolatore->calculate_output(error);
         /* safety control: checking robot position limits */
-        if (robot.get_position() >= robot.POS_LIMIT_SUP)
+        if (robot->get_position() >= robot->POS_LIMIT_SUP)
         {
             if (output > 0) // if velocity is positive
             {
                 output = 0;
             }
         }
-        else if (robot.get_position() <= robot.POS_LIMIT_INF)
+        else if (robot->get_position() <= robot->POS_LIMIT_INF)
         {
             if (output < 0) // if velocity is negative
             {
@@ -156,11 +161,11 @@ void controlLoop()
 
         /*give meca velocity command*/
         velocity[0] = output;
-        robot.move_lin_vel_wrf(velocity);
+        robot->move_lin_vel_wrf(velocity);
 
         /*export data*/
         // "time,reference,position,measured_distance,error,velocity_control"
-        writeDataToCsv(current_time, reference_distance, robot->get_position(), currentDistance, error, output,logger);
+        writeDataToCsv(current_time, distanzaRiferimentoAttuale, robot->get_position(), currentDistance, error, output,logger);
 
         /*delay*/
         delay_time = SAMPLING_TIME * 1e6 - (getCurrentTimeMicros() - start);
@@ -177,7 +182,7 @@ void handleOutOfRange()
     /*stop Meca*/
     velocity[0] = 0;
     regolatore->reset();
-    robot.move_lin_vel_wrf(velocity);
+    robot->move_lin_vel_wrf(velocity);
     /*wait for obstacle.*/
 
     while (currentDistance > 200)
@@ -186,7 +191,7 @@ void handleOutOfRange()
         currentDistance = infraredSensor->getDistanceInMillimeters();
 
         /*export data*/
-        writeDataToCsv(current_time, reference_distance, robot->get_position(), currentDistance, distanzaRiferimento - currentDistance, 0,logger);
+        writeDataToCsv(current_time, distanzaRiferimentoAttuale, robot->get_position(), currentDistance, distanzaRiferimentoFinale - currentDistance, 0,logger);
         /*compute dalay*/
         delay_time = SAMPLING_TIME * 1e6 - (getCurrentTimeMicros() - start);
         std::this_thread::sleep_for(std::chrono::microseconds(delay_time));
@@ -198,16 +203,16 @@ void handleOutOfRange()
     /*new interpolation needed, preparation (see interpolation)*/
     interpolate = true;
     starting_reference = currentDistance;
-    slope = (distanzaRiferimento - starting_reference) / rise_time;
+    slope = (distanzaRiferimentoFinale - starting_reference) / rise_time;
     interpolate_time = current_time;
 }
 
 void interpolateReference()
 {
-    reference_distance = slope * (current_time - interpolate_time) + starting_reference;
-    if ((slope > 0 && reference_distance >= distanzaRiferimento) || (slope <= 0 && reference_distance <= reference_user))
+    distanzaRiferimentoAttuale = slope * (current_time - interpolate_time) + starting_reference;
+    if ((slope > 0 && distanzaRiferimentoAttuale >= distanzaRiferimentoFinale) || (slope <= 0 && distanzaRiferimentoAttuale <= distanzaRiferimentoFinale))
     {
-        reference_distance = distanzaRiferimento;
+        distanzaRiferimentoAttuale = distanzaRiferimentoFinale;
         interpolate = false;
     }
 }
@@ -280,7 +285,7 @@ void setupCsvLogger()
 void writeDataToCsv(float time, float reference, float position, float measured_distance, float error, float velocity_control, CsvLogger &logger)
 {
     logger << current_time;
-    logger << reference_distance;
+    logger << distanzaRiferimentoAttuale;
     logger << robot->get_position();
     logger << currentDistance;
     logger << 0;
@@ -335,7 +340,7 @@ string handleRef(string value)
 {
     stringstream optionMessage;
     optionMessage << left << setw(message_length) << "Riferimento impostato a: " << value << "\n";
-    distanzaRiferimento = stof(value);
+    distanzaRiferimentoFinale = stof(value);
     return optionMessage.str();
 }
 
