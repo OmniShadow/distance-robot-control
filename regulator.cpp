@@ -19,6 +19,7 @@
 #include <math.h>
 #include <chrono>
 #include <Regolatore.hpp>
+#include <Regolatore.cpp>
 
 /*costants*/
 #define DEFAULT_SAMPLE_TIME 0.02               // sampling period in seconds
@@ -114,7 +115,7 @@ int main(int argc, char *argv[])
             cout << "Waiting for Obstacle in range..\n";
 
             /*stop Meca*/
-            vvelocity[0] = 0;
+            velocity[0] = 0;
             regolatore->reset();
             robot.move_lin_vel_wrf(velocity);
 
