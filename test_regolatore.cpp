@@ -68,7 +68,7 @@ string handleStop(string value);
 string handleRef(string value);
 string handleCalibration(string value);
 
-void writeDataToCsv(float time, float reference, float position, float measured_distance, float error, float velocity_control);
+void writeDataToCsv(float time, float reference, float position, float measured_distance, float error, float velocity_control,CsvLogger &logger);
 
 std::atomic<float> distanzaRiferimento(DEFAULT_REFERENCE_mm);
 bool isRunning = true;
@@ -76,7 +76,7 @@ bool isRunning = true;
 InfraredSensor *infraredSensor = nullptr;
 Robot *robot = nullptr;
 Regolatore *regolatore = nullptr;
-CsvLogger *data_test = nullptr;
+CsvLogger *logger = nullptr;
 
 float currentDistance;
 
@@ -160,7 +160,7 @@ void controlLoop()
 
         /*export data*/
         // "time,reference,position,measured_distance,error,velocity_control"
-        writeDataToCsv(current_time, reference_distance, robot->get_position(), currentDistance, error, output);
+        writeDataToCsv(current_time, reference_distance, robot->get_position(), currentDistance, error, output,logger);
 
         /*delay*/
         delay_time = SAMPLING_TIME * 1e6 - (getCurrentTimeMicros() - start);
@@ -186,7 +186,7 @@ void handleOutOfRange()
         currentDistance = infraredSensor->getDistanceInMillimeters();
 
         /*export data*/
-        writeDataToCsv(current_time, reference_distance, robot->get_position(), currentDistance, distanzaRiferimento - currentDistance, 0);
+        writeDataToCsv(current_time, reference_distance, robot->get_position(), currentDistance, distanzaRiferimento - currentDistance, 0,logger);
         /*compute dalay*/
         delay_time = SAMPLING_TIME * 1e6 - (getCurrentTimeMicros() - start);
         std::this_thread::sleep_for(std::chrono::microseconds(delay_time));
@@ -273,19 +273,19 @@ void setupRegulator()
 
 void setupCsvLogger()
 {
-    data_test = new CsvLogger("test_closed_loop/data_test.csv");
-    data_test->write("time,reference,position,measured_distance,error,velocity_control\n"); // if !take_data -> empy file
+    logger = new CsvLogger("test_closed_loop/data_test.csv");
+    logger->write("time,reference,position,measured_distance,error,velocity_control\n"); // if !take_data -> empy file
 }
 
-void writeDataToCsv(float time, float reference, float position, float measured_distance, float error, float velocity_control)
+void writeDataToCsv(float time, float reference, float position, float measured_distance, float error, float velocity_control, CsvLogger &logger)
 {
-    data_test* << current_time;
-    data_test* << reference_distance;
-    data_test* << robot.get_position();
-    data_test* << currentDistance;
-    data_test* << 0;
-    data_test* << 0;
-    data_test->end_row();
+    logger << current_time;
+    logger << reference_distance;
+    logger << robot->get_position();
+    logger << currentDistance;
+    logger << 0;
+    logger << 0;
+    logger->end_row();
 }
 
 void setupCommandHandlers()
