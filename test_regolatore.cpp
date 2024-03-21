@@ -399,7 +399,7 @@ map<string, string> parseOptionTokens(int argc, char *argv[])
 {
     map<string, string> options;
 
-    for (int i = 1; i < argc; ++i)
+    for (int i = 0; i < argc; ++i)
     {
         string arg = argv[i];
         cout << "Comando ricevuto: " << argv[i] << endl;
