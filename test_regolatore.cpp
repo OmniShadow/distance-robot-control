@@ -239,7 +239,7 @@ void riceviOpzioni()
             argv[i] = new char[tokens[i].size() + 1];
             std::strcpy(argv[i], tokens[i].c_str());
         }
-
+        
         executeOptions(parseOptionTokens(argc, argv));
     }
 }
@@ -402,6 +402,7 @@ map<string, string> parseOptionTokens(int argc, char *argv[])
     for (int i = 1; i < argc; ++i)
     {
         string arg = argv[i];
+        cout << "Comando ricevuto: " << argv[i] << endl;
         if (arg.substr(0, 2) == "--")
         {
             string command;
