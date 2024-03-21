@@ -1,7 +1,7 @@
 #include "distance_sensor/include/InfraredSensor.hpp"
 #include "meca500_ethercat_cpp/Robot.hpp"
 #include "csvlogger/CsvLogger.hpp"
-#include <Regolatore.hpp>
+#include <Regolatore.cpp>
 #include <vector>
 #include <unistd.h>
 #include <iostream>
