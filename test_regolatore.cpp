@@ -132,9 +132,12 @@ void controlLoop()
 
     while (isRunning)
     {
-        while (!controlLoopActive)
+        if (!controlLoopActive)
         {
-            std::this_thread::sleep_for(std::chrono::milliseconds(500)); // Print every second
+            velocity[0] = 0;
+            robot->move_lin_vel_wrf(velocity);
+            while (!controlLoopActive)
+                std::this_thread::sleep_for(std::chrono::milliseconds(500)); // Print every second
         }
         start = getCurrentTimeMicros();
 
@@ -367,6 +370,8 @@ string handlePause(string value)
         cout << "Resuming control loop..." << endl;
     }
     controlLoopActive = !controlLoopActive;
+    float vel[] = {0, 0, 0, 0, 0, 0};
+    robot->move_lin_vel_wrf(vel);
     return "";
 }
 
@@ -510,14 +515,25 @@ vector<float> parseStringToVector(string input)
     ss >> discard; // Discard the opening curly brace
 
     // Read the values into the vector
-    float value;
-    while (ss >> value)
+    string token;
+    while (ss >> token)
     {
-        result.push_back(value);
+        // Check if token is a number
+        bool isNumber = true;
+        for (char c : token)
+        {
+            if (!(isdigit(c) || c == '.'))
+            {
+                isNumber = false;
+                break;
+            }
+        }
 
-        // Check for comma and discard if present
-        if (ss.peek() == ',')
-            ss.ignore();
+        if (isNumber)
+        {
+            // Convert the token to float and add to result
+            result.push_back(stof(token));
+        }
     }
     return result;
 }
