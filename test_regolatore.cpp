@@ -316,7 +316,7 @@ void setupCommandHandlers()
     optionHandlers[REFERENCE_COMMAND] = OptionHandler(handleRef, refMessage.str());
     optionHandlers[STOP_COMMAND] = OptionHandler(handleStop, stopMessage.str());
     optionHandlers[CALIBRATION_CURVE_COMMAND] = OptionHandler(handleCalibration, calMessage.str());
-    optionHandlers[ROBOT_POSITION_COMMAND] = OptionHandler(handleRobotPosition, robotPositionMessage.str());
+    // optionHandlers[ROBOT_POSITION_COMMAND] = OptionHandler(handleRobotPosition, robotPositionMessage.str());
     optionHandlers[PAUSE_COMMAND] = OptionHandler(handlePause, pauseMessage.str());
 }
 
