@@ -44,11 +44,11 @@ void delayMicroseconds(uint64_t microseconds); // pause execution
 
 void setupRegulator()
 {
-    double pole_1 = 0.6;
-    double zero_1 = 0.7967;
-    double gain = 1.6334;
-    vector<double> input_coeff{gain, -gain * zero_1};
-    vector<double> output_coeff{2 * pole_1, -pole_1 * pole_1};
+    float pole_1 = 0.6;
+    float zero_1 = 0.7967;
+    float gain = 1.6334;
+    vector<float> input_coeff{gain, -gain * zero_1};
+    vector<float> output_coeff{2 * pole_1, -pole_1 * pole_1};
     regolatore = new Regolatore(output_coeff, input_coeff);
 }
 
