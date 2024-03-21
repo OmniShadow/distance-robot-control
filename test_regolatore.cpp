@@ -112,8 +112,16 @@ float velocity[] = {0, 0, 0, 0, 0, 0};
 float error = 0;
 float output = 0;
 
+string datapath;
+
 int main(int argc, char const *argv[])
 {
+    if(argc > 1){
+        datapath = argv[1]
+    }
+    else{
+        datapath = "dati_regolatore/data.csv";
+    }
     setup();
     // Create two threads
     std::thread controlLoopThread(controlLoop);
@@ -295,7 +303,7 @@ void setupRegulator()
 
 void setupCsvLogger()
 {
-    logger = new CsvLogger("test_closed_loop/data_test.csv");
+    logger = new CsvLogger(datapath.c_str());
     logger->write("time,reference,position,measured_distance,error,velocity_control\n"); // if !take_data -> empy file
 }
 
