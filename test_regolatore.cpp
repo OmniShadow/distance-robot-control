@@ -449,3 +449,10 @@ vector<float> parseStringToVector(string input)
     }
     return result;
 }
+
+uint64_t getCurrentTimeMicros()
+{
+    return std::chrono::duration_cast<std::chrono::microseconds>(
+               std::chrono::system_clock::now().time_since_epoch())
+        .count();
+}
