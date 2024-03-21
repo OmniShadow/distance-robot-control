@@ -61,6 +61,7 @@ void setupHelpMessages();
 
 vector<std::string> splitString(const string &input);
 map<string, string> parseOptionTokens(int argc, char *argv[]);
+vector<float> parseStringToVector(string input);
 
 string handleHelp(string value);
 string handleStop(string value);
@@ -323,7 +324,8 @@ string handleHelp(string value)
 string handleStop(string value)
 {
     cout << "Stopping execution\n";
-    robot->move_lin_vel_wrf({0, 0, 0, 0, 0, 0});
+    float vel[] = {0, 0, 0, 0, 0, 0};
+    robot->move_lin_vel_wrf(vel);
     robot->deactivate();
     exit(0);
     return "";
@@ -340,7 +342,7 @@ string handleRef(string value)
 string handleCalibration(string value)
 {
     stringstream optionMessage;
-    vector<float> calibration_values = parse_string_to_vector(value);
+    vector<float> calibration_values = parseStringToVector(value);
 
     if (infraredSensor != nullptr)
     {
@@ -407,4 +409,34 @@ map<string, string> parseOptionTokens(int argc, char *argv[])
     }
 
     return options;
+}
+
+vector<float> parseStringToVector(string input)
+{
+    vector<float> result;
+
+    // Check if the string starts with a curly brace
+    if (input.empty() || input[0] != '{')
+    {
+        cerr << "Error: Input string does not start with a curly brace.\n";
+        return result;
+    }
+
+    stringstream ss(input);
+
+    // Remove curly braces from the input string
+    char discard;
+    ss >> discard; // Discard the opening curly brace
+
+    // Read the values into the vector
+    float value;
+    while (ss >> value)
+    {
+        result.push_back(value);
+
+        // Check for comma and discard if present
+        if (ss.peek() == ',')
+            ss.ignore();
+    }
+    return result;
 }
