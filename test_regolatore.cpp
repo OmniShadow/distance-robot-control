@@ -117,7 +117,7 @@ string datapath;
 int main(int argc, char const *argv[])
 {
     if(argc > 1){
-        datapath = argv[1]
+        datapath = argv[1];
     }
     else{
         datapath = "dati_regolatore/data.csv";
