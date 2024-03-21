@@ -169,7 +169,7 @@ void controlLoop()
 
         /*export data*/
         // "time,reference,position,measured_distance,error,velocity_control"
-        writeDataToCsv(current_time, distanzaRiferimentoAttuale, robot->get_position(), currentDistance, error, output,logger);
+        writeDataToCsv(current_time, distanzaRiferimentoAttuale, robot->get_position(), currentDistance, error, output, *logger);
 
         /*delay*/
         delay_time = SAMPLING_TIME * 1e6 - (getCurrentTimeMicros() - start);
@@ -195,7 +195,7 @@ void handleOutOfRange()
         currentDistance = infraredSensor->getDistanceInMillimeters();
 
         /*export data*/
-        writeDataToCsv(current_time, distanzaRiferimentoAttuale, robot->get_position(), currentDistance, distanzaRiferimentoFinale - currentDistance, 0,logger);
+        writeDataToCsv(current_time, distanzaRiferimentoAttuale, robot->get_position(), currentDistance, distanzaRiferimentoFinale - currentDistance, 0, *logger);
         /*compute dalay*/
         delay_time = SAMPLING_TIME * 1e6 - (getCurrentTimeMicros() - start);
         std::this_thread::sleep_for(std::chrono::microseconds(delay_time));
