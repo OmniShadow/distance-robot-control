@@ -110,7 +110,7 @@ def analyse_file(file_path):
 
 
 def main():
-    analyse_file("../test_closed_loop/data_test.csv")
+    analyse_file("dati_video/data5.csv")
 
 
 if __name__ == "__main__":
