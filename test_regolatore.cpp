@@ -73,6 +73,8 @@ string handleStop(string value);
 string handlePause(string value);
 string handleRef(string value);
 string handleCalibration(string value);
+string handleRobotPosition(string value);
+
 void handleOutOfRange();
 void interpolateReference();
 void moveRobotToPosition(vector<float> robot_position);
@@ -365,7 +367,8 @@ string handlePause(string value)
     {
         cout << "Resuming control loop..." << endl;
     }
-    controlLoopActive = !controlLoopActive return "";
+    controlLoopActive = !controlLoopActive;
+    return "";
 }
 
 string handleRef(string value)
