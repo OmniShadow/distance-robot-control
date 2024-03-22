@@ -15,29 +15,34 @@
 #include <sstream>
 #include <iomanip>
 
+// definizione dei comandi disponibili
 #define HELP_COMMAND "help"
 #define STOP_COMMAND "stop"
 #define REFERENCE_COMMAND "rif"
 #define CALIBRATION_CURVE_COMMAND "cal"
-#define ROBOT_POSITION_COMMAND "pose"
 #define PAUSE_COMMAND "pause"
 
+// parametri per le descrizioni dei comandi
 #define optionWidth 60
 #define descriptionWidth 60
 #define message_length 30
 
-#define SAMPLING_TIME 0.02
-#define DEFAULT_REFERENCE_mm -50
+// parametri per il controllo
+#define SAMPLING_TIME 0.02         // Periodo di campionamento in secondi
+#define SAMPLING_TIME_MICROS 20000 // Periodi di campionamento in micro secondi
+#define DEFAULT_REFERENCE_mm -50   // Distanza di riferimento di default
+#define INTERPOLATION_DURATION 0.5 // Durata interpolazione riferimento in secondi
 
 using namespace std;
 
+// Messagi relativi ai comandi disponibili
 stringstream helpMessage;
 stringstream stopMessage;
 stringstream pauseMessage;
 stringstream refMessage;
 stringstream calMessage;
-stringstream robotPositionMessage;
 
+// Struct per la gestione dei comandi
 struct OptionHandler
 {
     using Handler = string (*)(string);
@@ -50,84 +55,93 @@ struct OptionHandler
     string helpMessage;
 };
 
+// Mappa contenente i comandi disponibili
 map<string, OptionHandler> optionHandlers;
 
-uint64_t getCurrentTimeMicros(); // return current time in microseconds
+uint64_t getCurrentTimeMicros(); // ritorna il tempo attuale in microsecondi
 
+// Funzioni di inizializzazione
 void setup();
-void setupSensor();
-void setupRobot();
-void setupRegulator();
-void setupCsvLogger();
-void setupHelpMessages();
-void setupCommandHandlers();
+void setupSensor();          // Setup del sensore
+void setupRobot();           // Setup del Meca500
+void setupRegulator();       // Setup regolatore
+void setupCsvLogger();       // Setup logger per i dati di controllo
+void setupHelpMessages();    // Setup per i messaggi dei comandi
+void setupCommandHandlers(); // Setup dei comandi
 
+// Funzioni per il parsing dei comandi
 vector<std::string> splitString(const string &input);
 map<string, string> parseOptionTokens(int argc, char *argv[]);
 vector<float> parseStringToVector(string input);
 
+// Funzione per l'esecuzione dei comandi ricevuti
 int executeOptions(map<string, string> options);
 
+// Handlers dei singoli comandi
 string handleHelp(string value);
 string handleStop(string value);
 string handlePause(string value);
 string handleRef(string value);
 string handleCalibration(string value);
-string handleRobotPosition(string value);
 
-void handleOutOfRange();
-void interpolateReference();
-void moveRobotToPosition(vector<float> robot_position);
-
+// Funzioni del ciclo di controllo
+void handleOutOfRange();                                // Funzione che gestisce l'ostacolo fuori portata del sensore
+void interpolateReference();                            // Funzione che gestisce il calcolo dell'interpolazione del riferimento
+void moveRobotToPosition(vector<float> robot_position); // Wrapper del metodo Robot::move_pose
 void writeDataToCsv(float time, float reference, float position, float measured_distance, float error, float velocity_control, CsvLogger &logger);
 
-void controlLoop();
-void riceviOpzioni();
+void controlLoop();   // Ciclo di controllo
+void receiveCommands(); // Ciclo di ricezione dei comandi
 
-std::atomic<float> distanzaRiferimentoFinale(DEFAULT_REFERENCE_mm);
-bool isRunning = true;
-bool controlLoopActive = true;
+std::atomic<float> finalReferenceDistance(DEFAULT_REFERENCE_mm); // Distanza di riferimento scelta
+std::atomic<bool> isRunning(true);                                  // Flag per l'esecuzione del programma
+std::atomic<bool> controlLoopActive(true);                          // Flag per l'esecuzione del ciclo di controllo
 
-InfraredSensor *infraredSensor = nullptr;
-Robot *robot = nullptr;
-Regolatore *regolatore = nullptr;
-CsvLogger *logger = nullptr;
+InfraredSensor *infraredSensor = nullptr; // Puntatore all'oggetto per la gestione del sensore
+Robot *robot = nullptr;                   // Puntatore all'oggetto per la gestione del Meca500
+Regolatore *regolatore = nullptr;         // Puntatore all'oggetto regolatore
+CsvLogger *csvLogger = nullptr;              // Puntatore all'oggetto per il logging dei dati
 
-float currentDistance;
+float currentDistance; // Variabile contente la distanza attuale misurata
 
-float distanzaRiferimentoAttuale = DEFAULT_REFERENCE_mm;
-bool interopolaRiferimento = true;
-float distanzaRiferimentoIniziale = 0;
-float durataInterpolazione = 0.5;
-float pendenzaRettaInterpolante = (distanzaRiferimentoFinale - distanzaRiferimentoIniziale) / durataInterpolazione;
-float tempoInterpolazione = 0;
-bool out_of_range = false;
+float currentReferenceDistance = DEFAULT_REFERENCE_mm;                                                            // Distanza di riferimento attuale per l'interpolazione
+bool interpolationActive = true;                                                                                  // Flag per l'interpolazione del riferimento
+float startingReferenceDistance = 0;                                                                              // Variabile usata per l'inizializzazione dell'interpolazione
+float interpolationDuration = INTERPOLATION_DURATION;                                                                                   // Durata dell'interpolazione del riferimento in secondi
+float interpolationSlope = (finalReferenceDistance - startingReferenceDistance) / interpolationDuration; // Pendenza della retta interpolante
+float interpolationTime = 0;                                                                                      // Istante iniziale per l'inizio dell'interpolazione
+bool obstacleOutOfRange = false;                                                                                          // Flag ostacolo fuori portata
 
-uint64_t t0, start;
-float current_time = 0;
-uint64_t delay_time;
+uint64_t start;         // Istante di inizio controllo
+float current_time = 0; // Tempo attuale in secondi
+uint64_t delayDuration;    // Tempo di attesa in microsecondi
 
-float velocity[] = {0, 0, 0, 0, 0, 0};
+float velocity[] = {0, 0, 0, 0, 0, 0}; // Vettore per le velocità del Meca500
 
-float error = 0;
-float output = 0;
+float error = 0;  // Errore tra riferimento e distanza misurata
+float output = 0; // Iutput del regolatore
 
-string datapath;
+string csvDataPath; // Percorso per il salvataggio dei dati di controllp
 
 int main(int argc, char const *argv[])
 {
-    if(argc > 1){
-        datapath = argv[1];
+    // Percorso di salvataggio dati passando a riga di comando
+    if (argc > 1)
+    {
+        csvDataPath = argv[1];
     }
-    else{
-        datapath = "dati_regolatore/data.csv";
+    // Percorso di salvataggio di default
+    else
+    {
+        csvDataPath = "dati_regolatore/data.csv";
     }
+    // Inizializzazione delle variabili
     setup();
-    // Create two threads
+    // Creazione ed esecuzione dei thread
     std::thread controlLoopThread(controlLoop);
-    std::thread riceviOpzioniThread(riceviOpzioni);
+    std::thread riceviOpzioniThread(receiveCommands);
 
-    // Wait for threads to finish execution
+    // Aspetta che entrambi i thread terminino l'esecuzione
     controlLoopThread.join();
     riceviOpzioniThread.join();
 
@@ -136,123 +150,141 @@ int main(int argc, char const *argv[])
 
 void controlLoop()
 {
-    cout << "Initializing control loop" << endl;
+    cout << "Starting control loop" << endl;
 
     while (isRunning)
     {
+        /* Controlla se il controllo è attivo */
         if (!controlLoopActive)
         {
             velocity[0] = 0;
             robot->move_lin_vel_wrf(velocity);
+            delayDuration = SAMPLING_TIME_MICROS;
             while (!controlLoopActive)
-                std::this_thread::sleep_for(std::chrono::milliseconds(500)); // Print every second
+                std::this_thread::sleep_for(std::chrono::microseconds(delayDuration));
         }
         start = getCurrentTimeMicros();
 
-        /*compute distance*/
+        /* Misura la distanza attuale tra sensore e ostacolo */
         currentDistance = -infraredSensor->getDistanceInMillimeters();
-        distanzaRiferimentoIniziale = currentDistance;
+        startingReferenceDistance = currentDistance;
 
-        /*OUT OF RANGE CASE (example: obstacle removed) */
+        /* Ostacolo fuori portata del sensore */
         if (currentDistance < -200)
         {
             handleOutOfRange();
         }
 
-        /* interpolation */
-        if (interopolaRiferimento)
+        /* Interpolazione del riferimento se necessario */
+        if (interpolationActive)
         {
             interpolateReference();
         }
 
-        /* computing error and output */
-        error = distanzaRiferimentoAttuale - currentDistance;
+        /* Calcolo dell'errore e della velocità da comandare */
+        error = currentReferenceDistance - currentDistance;
         output = regolatore->calculate_output(error);
-        /* safety control: checking robot position limits */
+
+        /* Controllo delle posizioni limite ammesse */
         if (robot->get_position() >= robot->POS_LIMIT_SUP)
         {
-            if (output > 0) // if velocity is positive
+            // se la velocità è positiva resta fermo
+            if (output > 0)
             {
                 output = 0;
             }
         }
         else if (robot->get_position() <= robot->POS_LIMIT_INF)
         {
-            if (output < 0) // if velocity is negative
+            // se la velocità è negativa resta fermo
+            if (output < 0)
             {
                 output = 0;
             }
         }
 
-        /*give meca velocity command*/
+        /* Invia la velocità calcolata al Meca500 */
         velocity[0] = output;
         robot->move_lin_vel_wrf(velocity);
 
-        /*export data*/
+        /* Scrivi dati di controllo sul file csv */
         // "time,reference,position,measured_distance,error,velocity_control"
-        writeDataToCsv(current_time, distanzaRiferimentoAttuale, robot->get_position(), currentDistance, error, output, *logger);
+        writeDataToCsv(current_time, currentReferenceDistance, robot->get_position(), currentDistance, error, output, *csvLogger);
 
-        /*delay*/
-        delay_time = SAMPLING_TIME * 1e6 - (getCurrentTimeMicros() - start);
-        std::this_thread::sleep_for(std::chrono::microseconds(delay_time)); // Print every second
-        current_time += SAMPLING_TIME;                                      // increse time by Tc_s for reference smoothing
+        /* Aspetta il tempo di campionamento corretto */
+        delayDuration = SAMPLING_TIME_MICROS - (getCurrentTimeMicros() - start);
+        std::this_thread::sleep_for(std::chrono::microseconds(delayDuration));
+
+        // Incremento il tempo attuale
+        current_time += SAMPLING_TIME;
     }
 }
 
 void handleOutOfRange()
 {
     cout << "Sensor out of range.. stopping robot\n";
-    cout << "Waiting for Obstacle in range..\n";
+    cout << "Waiting for obstacle to be in range..\n";
 
-    /*stop Meca*/
+    /* Ferma il Meca500 */
     velocity[0] = 0;
     regolatore->reset();
     robot->move_lin_vel_wrf(velocity);
-    /*wait for obstacle.*/
 
+    /* Aspetta che l'ostacolo torni all'interno della portata del sensore */
     while (currentDistance < -200)
     {
         start = getCurrentTimeMicros();
         currentDistance = -infraredSensor->getDistanceInMillimeters();
 
-        /*export data*/
-        writeDataToCsv(current_time, distanzaRiferimentoAttuale, robot->get_position(), currentDistance, distanzaRiferimentoFinale - currentDistance, 0, *logger);
-        /*compute dalay*/
-        delay_time = SAMPLING_TIME * 1e6 - (getCurrentTimeMicros() - start);
-        std::this_thread::sleep_for(std::chrono::microseconds(delay_time));
+        /* Scrivi i dati di controllo sul file csv */
+        writeDataToCsv(current_time, currentReferenceDistance, robot->get_position(), currentDistance, finalReferenceDistance - currentDistance, 0, *csvLogger);
+
+        /* Aspetta il tempo di campionamento corretto */
+        delayDuration = SAMPLING_TIME * 1e6 - (getCurrentTimeMicros() - start);
+        std::this_thread::sleep_for(std::chrono::microseconds(delayDuration));
         current_time += SAMPLING_TIME;
     }
 
     cout << "Obstacle in range.. resuming control\n";
 
-    /*new interpolation needed, preparation (see interpolation)*/
-    interopolaRiferimento = true;
-    distanzaRiferimentoIniziale = currentDistance;
-    pendenzaRettaInterpolante = (distanzaRiferimentoFinale - distanzaRiferimentoIniziale) / durataInterpolazione;
-    tempoInterpolazione = current_time;
+    /* L'ostacolo è tornato all'interno della portata del sensore */
+    // È necessaria un'altra interpolazione
+    interpolationActive = true;
 }
 
 void interpolateReference()
 {
-    distanzaRiferimentoAttuale = pendenzaRettaInterpolante * (current_time - tempoInterpolazione) + distanzaRiferimentoIniziale;
-    if ((pendenzaRettaInterpolante > 0 && distanzaRiferimentoAttuale >= distanzaRiferimentoFinale) || (pendenzaRettaInterpolante <= 0 && distanzaRiferimentoAttuale <= distanzaRiferimentoFinale))
+    // Inizia l'interpolazione a partire dalla distanza attuale del robot
+    startingReferenceDistance = currentDistance;
+    // Calcola la pendenza della retta interpolante
+    interpolationSlope = (finalReferenceDistance - startingReferenceDistance) / interpolationDuration;
+    // Inizializza il tempo di interpolazione all'istante attuale
+    interpolationTime = current_time;
+
+    // Calcola l'interpolazione
+    currentReferenceDistance = interpolationSlope * (current_time - interpolationTime) + startingReferenceDistance;
+    // Se la retta interpolata ha raggiunto o superato il valore finale termina l'interpolazione
+    if ((interpolationSlope > 0 && currentReferenceDistance >= finalReferenceDistance) || (interpolationSlope <= 0 && currentReferenceDistance <= finalReferenceDistance))
     {
-        distanzaRiferimentoAttuale = distanzaRiferimentoFinale;
-        interopolaRiferimento = false;
+        currentReferenceDistance = finalReferenceDistance;
+        interpolationActive = false;
     }
 }
 
-// Function for the thread that gets input from the user to update the shared value
-void riceviOpzioni()
+// Funzione che riceve continuamente i comandi dall'utente per eseguirli
+void receiveCommands()
 {
     string input;
+    // Pulisci l'ingresso
     cin.clear();
     fflush(stdin);
+
     while (isRunning)
     {
         cout << "Inserisci comandi da eseguire --commandname=commandvalue [--help]: " << endl;
         getline(std::cin, input);
 
+        // Esegui il parsing del comando ricevuto
         vector<string> tokens = splitString(input);
 
         int argc = tokens.size();
@@ -263,6 +295,7 @@ void riceviOpzioni()
             std::strcpy(argv[i], tokens[i].c_str());
         }
 
+        // Esegui le istruzioni ricevute
         executeOptions(parseOptionTokens(argc, argv));
     }
 }
@@ -303,14 +336,14 @@ void setupRegulator()
 
 void setupCsvLogger()
 {
-    logger = new CsvLogger(datapath.c_str());
-    logger->write("time,reference,position,measured_distance,error,velocity_control\n"); // if !take_data -> empy file
+    csvLogger = new CsvLogger(csvDataPath.c_str());
+    csvLogger->write("time,reference,position,measured_distance,error,velocity_control\n");
 }
 
 void writeDataToCsv(float time, float reference, float position, float measured_distance, float error, float velocity_control, CsvLogger &logger)
 {
     logger << current_time;
-    logger << distanzaRiferimentoAttuale;
+    logger << currentReferenceDistance;
     logger << robot->get_position();
     logger << currentDistance;
     logger << error;
@@ -324,7 +357,6 @@ void setupCommandHandlers()
     optionHandlers[REFERENCE_COMMAND] = OptionHandler(handleRef, refMessage.str());
     optionHandlers[STOP_COMMAND] = OptionHandler(handleStop, stopMessage.str());
     optionHandlers[CALIBRATION_CURVE_COMMAND] = OptionHandler(handleCalibration, calMessage.str());
-    // optionHandlers[ROBOT_POSITION_COMMAND] = OptionHandler(handleRobotPosition, robotPositionMessage.str());
     optionHandlers[PAUSE_COMMAND] = OptionHandler(handlePause, pauseMessage.str());
 }
 
@@ -383,11 +415,8 @@ string handleRef(string value)
 {
     stringstream optionMessage;
     optionMessage << left << setw(message_length) << "Riferimento impostato a: " << value << "\n";
-    distanzaRiferimentoFinale = -stof(value);
-    distanzaRiferimentoIniziale = currentDistance;
-    pendenzaRettaInterpolante = (distanzaRiferimentoFinale - distanzaRiferimentoIniziale) / durataInterpolazione;
-    tempoInterpolazione = current_time;
-    interopolaRiferimento = true;
+    finalReferenceDistance = -stof(value);
+    interpolationActive = true;
     return optionMessage.str();
 }
 
@@ -403,22 +432,6 @@ string handleCalibration(string value)
     optionMessage << left << setw(message_length) << "Parametri calibrazione sensore: " << value << "\n";
 
     return optionMessage.str();
-}
-string handleRobotPosition(string value)
-{
-    stringstream option_message;
-    vector<float> robot_position_values = parseStringToVector(value);
-    if (robot_position_values.size() < 6)
-    {
-        cerr << "Invalid robot position, not enough arguments" << endl;
-        return "";
-    }
-    option_message << left << setw(message_length) << "Robot pose set to: {";
-    for (float pos : robot_position_values)
-        option_message << pos << ", ";
-    option_message << "}" << endl;
-    moveRobotToPosition(robot_position_values);
-    return option_message.str();
 }
 
 void moveRobotToPosition(vector<float> robot_position)
@@ -455,12 +468,6 @@ void setupHelpMessages()
         << "  --" << CALIBRATION_CURVE_COMMAND << setw(optionWidth - strlen(CALIBRATION_CURVE_COMMAND))
         << "=\"{m, q}\""
         << "Specifica i parametri di calibrazione del sensore [default {1, 0} ]" << endl;
-
-    robotPositionMessage
-        << left
-        << "  --" << ROBOT_POSITION_COMMAND << setw(optionWidth - strlen(ROBOT_POSITION_COMMAND))
-        << "=\"{x,y,z,alpha,beta,gamma}\""
-        << "Specify the pose of the meca500 [starting position {115, -170, 120, 90, 90, 0} ]" << endl;
 }
 
 vector<std::string> splitString(const string &input)
@@ -519,25 +526,14 @@ vector<float> parseStringToVector(string input)
     ss >> discard; // Discard the opening curly brace
 
     // Read the values into the vector
-    string token;
-    while (ss >> token)
+    float value;
+    while (ss >> value)
     {
-        // Check if token is a number
-        bool isNumber = true;
-        for (char c : token)
-        {
-            if (!(isdigit(c) || c == '.'))
-            {
-                isNumber = false;
-                break;
-            }
-        }
+        result.push_back(value);
 
-        if (isNumber)
-        {
-            // Convert the token to float and add to result
-            result.push_back(stof(token));
-        }
+        // Check for comma and discard if present
+        if (ss.peek() == ',')
+            ss.ignore();
     }
     return result;
 }
