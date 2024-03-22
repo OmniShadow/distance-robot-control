@@ -4,7 +4,7 @@
 #include <Regolatore.hpp>
 using namespace std;
 
-
+// Resetta tutte le variabili di stato a 0
 void Regolatore::reset(){
     previous_inputs.resize(previous_inputs.size(), 0);
     previous_outputs.resize(previous_outputs.size(), 0);
